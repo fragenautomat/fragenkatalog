@@ -20,6 +20,7 @@ from django.urls import include, path
 
 from fragenkatalog import views
 from fragenkatalog.quizzes.urls import urls as quizzes_urls
+from fragenkatalog.questions.urls import urls as questions_urls
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
@@ -31,4 +32,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     url(r'^quizzes/', include(quizzes_urls)),
+    url(r'^questions/', include(questions_urls)),
 ]

@@ -25,6 +25,7 @@
           Published {{ time }} ago.</small>
           {% endblocktrans %}
       </p>
+      <a class="btn btn-primary" href="{% url 'questionnaire' quiz.id %}">Show</a>
     </div>
     </div>
     {% if forloop.counter|divisibleby:4 %}</div><div class="card-group">{% endif %}

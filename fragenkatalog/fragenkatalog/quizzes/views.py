@@ -21,9 +21,9 @@ def delete_quiz(request, id):
     messages.success(request, "Quiz was successfully deleted!")
     return HttpResponseRedirect("/")
 
-
+@login_required
 def new_quiz(request):
-    if not request.user or not request.user.is_superuser:
+    if not request.user.is_superuser:
         messages.error(request, "To create a new quiz, you need to be logged in as admin.")
         return HttpResponseRedirect("/")
     if not request.method == "POST":
