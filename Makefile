@@ -1,4 +1,5 @@
 run:
 	pipenv run ./fragenkatalog/manage.py runserver
-migrate:
-	pipenv run ./fragenkatalog/manage.py migrate
+migrations:
+	pipenv run ./fragenkatalog/manage.py makemigrations
+	pipenv run ./fragenkatalog/manage.py migrate --run-syncdb
