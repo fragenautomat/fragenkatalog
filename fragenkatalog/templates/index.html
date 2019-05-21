@@ -7,13 +7,13 @@
 <div class="container" style="padding-top: 20px;">
     {% for quiz in quizzes %}
     {% if forloop.first %}<div class="card-group">{% endif %}
-    <div class="card border-dark mb-3 hoverable" style="max-width: 16rem;">
+    <div class="card border-dark mb-3 hoverable shadow-lg" style="max-width: 16rem;">
     <div class="card-header text-center text-light bg-primary">
       <span class="fas fa-question-circle" style="font-size: 100px;"></span>
     </div>
     <div class="card-body text-dark">
     {% if user.is_authenticated and user.is_superuser %}
-    <a id="confirmation-needed" class="badge badge-danger"
+    <a class="badge badge-danger confirmation-needed"
        href="{% url 'delete_quiz' quiz.id %}">Delete this quiz</a>
     {% endif %}
       <h5 class="card-title">
@@ -34,7 +34,10 @@
     {% if user.is_authenticated and user.is_superuser %}
     <form action="{% url 'new_quiz' %}" method="post">
         {% csrf_token %}
-        <div class="card border-dark mb-3" style="max-width: 16rem;">
+        <div class="card border-dark mb-3 shadow-sm" style="max-width: 16rem;">
+        <div class="card-header text-center text-light bg-secondary">
+          <span class="fas fa-plus" style="font-size: 100px;"></span>
+        </div>
         <input type="text" name="title" class="form-control border-radius-0"
                placeholder="Title" aria-label="Title">
         <input type="text" name="description" class="form-control border-radius-0"
@@ -50,13 +53,11 @@
 {% block extrabody %}
 {% if user.is_authenticated and user.is_superuser %}
 <script>
-document
-    .getElementById("confirmation-needed")
-    .addEventListener("click", function(e){
-        if(!confirm("Do you really want to do this?")){
-            e.preventDefault();
-        }
-    });
+$(".confirmation-needed").click(function(e) {
+    if (!confirm("Do you really want to do this?")) {
+        e.preventDefault();
+    }
+});
 </script>
 {% endif %}
 {% endblock %}
