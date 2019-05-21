@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+{% if form.errors %}
+<div class="container" style="padding-top: 20px;">
+    <div class="alert alert-danger">Your username and password didn't match. Please try again.</div>
+</div>
+{% endif %}
+
+{% if next %}
+<div class="container" style="padding-top: 20px;">
+    {% if user.is_authenticated %}
+    <div class="alert alert-danger">Your account doesn't have access to this page. To proceed, please login with an account that has access.</div>
+    {% else %}
+    <div class="alert alert-danger">Please login to see this page.</div>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="container">
+<form action="{% url 'login' %}" method="post" class="form-signin" style="margin: auto 0;">
+  {% csrf_token %}
+    <div class="card centered border-dark mb-3 hoverable" style="max-width: 20rem; margin-top: 20px;">
+    <div class="card-body text-dark">
+    <input type="text" name="username" id="input-username" class="form-control" placeholder="Username" required autofocus>
+
+    <input type="password" name="password" id="input-password" style="margin-top: 10px;" class="form-control" placeholder="Password" required>
+
+    <input type="hidden" name="next" value="{{ next }}">
+    </div>
+    <div class="card-footer text-light">
+    <button class="btn btn-lg btn-primary btn-block" type="submit">
+        Sign in
+    </button>
+    </div>
+    </div>
+</form>
+</div>
+
+{% endblock %}

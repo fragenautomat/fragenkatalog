@@ -1,29 +1,62 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load staticfiles %}
 
 {% block body %}
 
 <div class="container" style="padding-top: 20px;">
-    <div class="card-columns">
-
-        {% for quiz in quizzes %}
-
-        <div class="card">
-        <img class="card-img-top" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22404%22%20height%3D%22180%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20404%20180%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16ad9aee540%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A20pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16ad9aee540%22%3E%3Crect%20width%3D%22404%22%20height%3D%22180%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22150.8515625%22%20y%3D%2299.15%22%3E404x180%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">{% trans quiz.title %}</h5>
-          <p class="card-text">{% trans quiz.description %}</p>
-          <p class="card-text"><small class="text-muted">
-              {% blocktrans with time=quiz.pubdate|timesince %}
-              Published {{ time }} ago.</small>
-              {% endblocktrans %}
-          </p>
-        </div>
-        </div>
-
-        {% endfor %}
-
+    {% for quiz in quizzes %}
+    {% if forloop.first %}<div class="card-group">{% endif %}
+    <div class="card border-dark mb-3 hoverable" style="max-width: 16rem;">
+    <div class="card-header text-center text-light bg-primary">
+      <span class="fas fa-question-circle" style="font-size: 100px;"></span>
     </div>
+    <div class="card-body text-dark">
+    {% if user.is_authenticated and user.is_superuser %}
+    <a id="confirmation-needed" class="badge badge-danger"
+       href="{% url 'delete_quiz' quiz.id %}">Delete this quiz</a>
+    {% endif %}
+      <h5 class="card-title">
+          {% trans quiz.title %}
+      </h5>
+      <p class="card-text">{% trans quiz.description %}</p>
+      <p class="card-text"><small class="text-muted">
+          {% blocktrans with time=quiz.pubdate|timesince %}
+          Published {{ time }} ago.</small>
+          {% endblocktrans %}
+      </p>
+    </div>
+    </div>
+    {% if forloop.counter|divisibleby:4 %}</div><div class="card-group">{% endif %}
+    {% if forloop.last %}</div>{% endif %}
+    {% endfor %}
+
+    {% if user.is_authenticated and user.is_superuser %}
+    <form action="{% url 'new_quiz' %}" method="post">
+        {% csrf_token %}
+        <div class="card border-dark mb-3" style="max-width: 16rem;">
+        <input type="text" name="title" class="form-control border-radius-0"
+               placeholder="Title" aria-label="Title">
+        <input type="text" name="description" class="form-control border-radius-0"
+               placeholder="Description" aria-label="Description">
+        <button type="submit" class="card-footer"><span class="fas fa-plus"></span> Create new Quiz</button>
+        </div>
+    </form>
+    {% endif %}
 </div>
 
+{% endblock %}
+
+{% block extrabody %}
+{% if user.is_authenticated and user.is_superuser %}
+<script>
+document
+    .getElementById("confirmation-needed")
+    .addEventListener("click", function(e){
+        if(!confirm("Do you really want to do this?")){
+            e.preventDefault();
+        }
+    });
+</script>
+{% endif %}
 {% endblock %}

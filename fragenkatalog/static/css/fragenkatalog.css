@@ -1,6 +1,6 @@
 
 .bg-custom-accent {
-    background-color: #e74c3c;
+    background-color: #2ecc71;
 }
 
 .bg-custom-accent-alt {
@@ -13,4 +13,14 @@
 
 .bg-custom-light {
     background-color: #ecf0f1;
+}
+
+.border-radius-0 {
+    border-radius: 0;
+}
+
+.card.centered {
+    margin: 0 auto;
+    float: none;
+    margin-bottom: 10px;
 }
