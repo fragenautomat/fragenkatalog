@@ -7,18 +7,17 @@
 <div class="container" style="padding-top: 20px;">
 
     {% for question in questions %}
-    <div class="card border-dark shadow-lg">
-        <div class="card-header">
+    <div class="card border-dark shadow-lg" style="margin-top: 20px;">
+        <h5 class="card-header" style="padding: 1rem;">
             {{ question.description }}
-        </div>
-        <div class="card-body bg-primary text-light">
-        <a class="btn btn-outline-light" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
-         role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}"
-            style="margin-bottom: 20px;">
-            Show Answer
+        <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
+           role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
+            <span class="fas fa-chevron-down"></span>
         </a>
+        </h5>
+        <div class="bg-primary text-light">
           <div class="collapse" id="collapse-{{ forloop.counter }}">
-            <div class="card-text">{{ question.solution }}</div>
+            <p style="padding: 1rem;" class="card-text">{{ question.solution }}</p>
           </div>
         </div>
     </div>
