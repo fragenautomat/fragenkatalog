@@ -14,11 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls import url
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
-from fragenkatalog import views
+from fragenkatalog import views, settings
 from fragenkatalog.quizzes.urls import urls as quizzes_urls
 from fragenkatalog.questions.urls import urls as questions_urls
 
@@ -33,4 +34,4 @@ urlpatterns = [
 
     url(r'^quizzes/', include(quizzes_urls)),
     url(r'^questions/', include(questions_urls)),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

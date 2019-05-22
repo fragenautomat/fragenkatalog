@@ -8,6 +8,9 @@
 
     {% for question in questions %}
     <div class="card border-dark shadow-lg" style="margin-top: 20px;">
+        {% if question.image %}
+        <img class="card-img-top" src="{{ question.image.url }}">
+        {% endif %}
         <h5 class="card-header" style="padding: 1rem;">
             {{ question.description }}
         <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
@@ -24,7 +27,7 @@
     {% endfor %}
 
     {% if user.is_authenticated and user.is_superuser %}
-    <form action="{% url 'new_question' quiz.id %}" method="post">
+    <form action="{% url 'new_question' quiz.id %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="card border-dark shadow-lg" style="margin-top: 20px;">
         <input type="text" name="description" class="form-control border-radius-0 card-header"
@@ -32,7 +35,7 @@
         <input type="text" name="solution" class="form-control border-radius-0 card-body"
                         placeholder="Solution" aria-label="Solution">
         <div class="custom-file">
-          <input type="file" class="custom-file-input" id="image">
+          <input type="file" accept="image/*" class="custom-file-input" id="image">
           <label class="custom-file-label" for="image">Choose a descriptive Image...</label>
         </div>
         <button type="submit" class="card-footer"><span class="fas fa-plus"></span> Create new question</button>

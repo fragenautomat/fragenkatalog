@@ -18,4 +18,4 @@ class TextualQuestion(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # optional fields
-    image = models.ImageField(upload_to="dynamic/images", null=True, blank=True)
+    image = models.ImageField(upload_to="images", null=True, blank=True)

@@ -16,7 +16,7 @@ def new_question(request, quiz_id):
     if not request.method == "POST":
         messages.debug(request, "Question creation is only allowed via POST.")
         return HttpResponseRedirect("/")
-    form = NewTextualQuestionForm(request.POST)
+    form = NewTextualQuestionForm(request.POST, request.FILES)
     if not form.is_valid():
         print(form.errors)
         messages.error(request, "The submitted form is incorrect.")
@@ -25,6 +25,7 @@ def new_question(request, quiz_id):
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
         return HttpResponseRedirect("/")
+    print(form.cleaned_data["image"])
     TextualQuestion.objects.create(
         description=form.cleaned_data["description"],
         solution=form.cleaned_data["solution"],
