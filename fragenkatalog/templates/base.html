@@ -17,7 +17,7 @@
   {% block extrahead %}{% endblock %}
 </head>
 
-<body class="{% block body_classes %}{% endblock %}">
+<body class="{% block body_classes %}{% endblock %}" {% block body_tags %}{% endblock %}>
 <nav class="navbar navbar-expand-lg navbar-dark bg-custom-accent">
   <div class="container">
     <a class="navbar-brand" href="/">Fragenkatalog</a>

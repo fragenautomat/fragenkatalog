@@ -4,28 +4,38 @@
 
 {% block body %}
 
-<div class="container" style="padding-top: 20px;">
+<div class="container" style="padding-top: 20px; padding-bottom: 100px;">
 
-    {% for question in questions %}
-    <div class="card border-dark shadow-lg" style="margin-top: 20px;">
-        {% if question.image %}
-        <img class="card-img-top" src="{{ question.image.url }}">
-        {% endif %}
-        <h5 class="card-header" style="padding: 1rem;">
-            {{ question.description }}
-        <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
-           role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
-            <span class="fas fa-chevron-down"></span>
-        </a>
-        </h5>
-        <div class="bg-primary text-light">
-          <div class="collapse" id="collapse-{{ forloop.counter }}">
-            <p style="padding: 1rem;" class="card-text">{{ question.solution }}</p>
-          </div>
+    <div id="carousel" class="carousel slide shadow-lg"
+         style="margin-bottom: 20px;"
+         data-ride="carousel" data-interval="false">
+      <div class="carousel-inner">
+      {% for question in questions %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <div class="card border-dark">
+                {% if question.image %}
+                <img class="card-img-top card-header" src="{{ question.image.url }}"
+                     style="max-height: 30rem; object-fit: contain;">
+                {% endif %}
+                <h5 class="card-header" style="padding: 1rem;">
+                    {{ question.description }}
+                <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
+                   role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
+                    <span class="fas fa-chevron-down"></span>
+                </a>
+                </h5>
+                <div class="bg-primary text-light">
+                  <div class="collapse" id="collapse-{{ forloop.counter }}">
+                    <p style="padding: 1rem;" class="card-text">{{ question.solution }}</p>
+                  </div>
+                </div>
+            </div>
         </div>
+      {% endfor %}
+      </div>
     </div>
-    {% endfor %}
 
+    <!--
     {% if user.is_authenticated and user.is_superuser %}
     <form action="{% url 'new_question' quiz.id %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -42,8 +52,51 @@
     </div>
     </form>
     {% endif %}
+    -->
 
 </div>
 
+<div style="position: fixed; right: 20px; bottom: 20px;">
+    <button id="next" class="btn btn-primary float-right shadow-lg" style="margin-left: 10px;">Next <span class="fas fa-chevron-right"></span></button>
+    <button id="prev" class="btn btn-primary float-right shadow-lg"><span class="fas fa-chevron-left"></span> Previous</button>
+</div>
 
+
+{% endblock %}
+
+{% block extrabody %}
+<script>
+
+$("#next").click(function(){
+  $("#carousel").carousel("next");
+});
+$("#prev").click(function(){
+  $("#carousel").carousel("prev");
+});
+$(document).keydown(function(e){
+    if (e.which == 37) {
+       $("#carousel").carousel("prev");
+       return false;
+    }
+    if (e.which == 39) {
+       $("#carousel").carousel("next");
+       return false;
+    }
+});
+$("#carousel").on("touchstart", function(event){
+        var xClick = event.originalEvent.touches[0].pageX;
+    $(this).one("touchmove", function(event){
+        var xMove = event.originalEvent.touches[0].pageX;
+        if( Math.floor(xClick - xMove) > 5 ){
+            $(this).carousel('next');
+        }
+        else if( Math.floor(xClick - xMove) < -5 ){
+            $(this).carousel('prev');
+        }
+    });
+    $(".carousel").on("touchend", function(){
+            $(this).off("touchmove");
+    });
+});
+</script>
 {% endblock %}
