@@ -25,6 +25,7 @@ class Quiz(models.Model):
 
     # optional fields
     deadline = models.DateTimeField(help_text="Optional date the task is due to", null=True, blank=True)
+    image = models.ImageField(upload_to="images", null=True, blank=True)
 
     @property
     def is_published(self):
