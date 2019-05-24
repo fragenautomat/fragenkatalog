@@ -45,6 +45,13 @@
         </li>
       </ul>
     </div>
+    <form class="form-inline" action="{% url 'search' %}" method="post">
+        {% csrf_token %}
+        <input class="form-control mr-sm-2" maxlength="100" name="search"
+               type="search" placeholder="Search quizzes" aria-label="Search"
+               {% if search %}value="{{ search }}"{% endif %}>
+        <button class="btn btn-primary" type="submit">Search</button>
+    </form>
   </div>
 </nav>
 

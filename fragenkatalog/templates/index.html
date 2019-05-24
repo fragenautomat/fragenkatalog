@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load staticfiles %}
+{% load highlight %}
 
 {% block body %}
 
 <div class="container" style="padding-top: 20px;">
     {% for quiz in quizzes %}
     {% if forloop.first %}<div class="card-group">{% endif %}
-    <div class="card border-dark mb-3 hoverable shadow-lg" style="max-width: 16rem;">
+    <div class="card border-dark mb-3 hoverable shadow-lg" style="max-width: 18rem;">
 
     {% if quiz.image %}
     <img class="card-img-top card-header" src="{{ quiz.image.url }}"
@@ -23,9 +24,19 @@
        href="{% url 'delete_quiz' quiz.id %}">Delete this quiz</a>
     {% endif %}
       <h5 class="card-title">
-          {% trans quiz.title %}
+          {% if search %}
+          {{ quiz.title|highlight:search }}
+          {% else %}
+          {{ quiz.title }}
+          {% endif %}
       </h5>
-      <p class="card-text">{% trans quiz.description %}</p>
+      <p class="card-text">
+          {% if search %}
+          {{ quiz.description|highlight:search }}
+          {% else %}
+          {{ quiz.description }}
+          {% endif %}
+      </p>
     {% if quiz.textualquestion_set.count > 0 %}
         <span class="card-text badge badge-secondary">
           {{ quiz.textualquestion_set.count }} question{{ quiz.textualquestion_set.count|pluralize:"s" }}

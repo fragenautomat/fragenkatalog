@@ -24,3 +24,8 @@
     float: none;
     margin-bottom: 10px;
 }
+
+.highlighted {
+    padding: 2px;
+    border-radius: 5px;
+}

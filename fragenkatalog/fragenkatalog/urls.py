@@ -25,6 +25,7 @@ from fragenkatalog.questions.urls import urls as questions_urls
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^search/', views.search, name='search'),
 
     url(r'i18n/', include('django.conf.urls.i18n')),
 
