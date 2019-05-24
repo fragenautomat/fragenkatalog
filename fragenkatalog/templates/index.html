@@ -50,22 +50,6 @@
     {% if forloop.counter|divisibleby:4 %}</div><div class="card-group">{% endif %}
     {% if forloop.last %}</div>{% endif %}
     {% endfor %}
-
-    {% if user.is_authenticated and user.is_superuser %}
-    <form action="{% url 'new_quiz' %}" method="post">
-        {% csrf_token %}
-        <div class="card border-dark mb-3 shadow-sm" style="max-width: 16rem;">
-        <div class="card-header text-center text-light bg-secondary">
-          <span class="fas fa-plus" style="font-size: 100px;"></span>
-        </div>
-        <input type="text" name="title" class="form-control border-radius-0"
-               placeholder="Title" aria-label="Title">
-        <input type="text" name="description" class="form-control border-radius-0"
-               placeholder="Description" aria-label="Description">
-        <button type="submit" class="card-footer"><span class="fas fa-plus"></span> Create new Quiz</button>
-        </div>
-    </form>
-    {% endif %}
 </div>
 
 {% endblock %}
