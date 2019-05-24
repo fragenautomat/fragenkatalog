@@ -11,7 +11,7 @@
     <div class="card border-dark mb-3 hoverable shadow-lg" style="max-width: 18rem;">
 
     {% if quiz.image %}
-    <img class="card-img-top card-header" src="{{ quiz.image.url }}"
+    <img class="card-img-top card-header" style="padding: 0;" src="{{ quiz.image.url }}"
          style="max-height: 30rem; object-fit: contain;">
     {% else %}
     <div class="card-header text-center text-light bg-primary">
@@ -19,10 +19,6 @@
     </div>
     {% endif %}
     <div class="card-body text-dark">
-    {% if user.is_authenticated and user.is_superuser %}
-    <a class="badge badge-danger confirmation-needed"
-       href="{% url 'delete_quiz' quiz.id %}">Delete this quiz</a>
-    {% endif %}
       <h5 class="card-title">
           {% if search %}
           {{ quiz.title|highlight:search }}
@@ -42,6 +38,15 @@
           {{ quiz.textualquestion_set.count }} question{{ quiz.textualquestion_set.count|pluralize:"s" }}
         </span>
     {% endif %}
+    {% for hashtag in quiz.hashtag_set %}
+        <span class="card-text badge badge-secondary">
+          {% if search %}
+          {{ hashtag|highlight:search }}
+          {% else %}
+          {{ hashtag }}
+          {% endif %}
+        </span>
+    {% endfor %}
       <p class="card-text">
         <small class="text-muted">
           {% blocktrans with time=quiz.pubdate|timesince %}

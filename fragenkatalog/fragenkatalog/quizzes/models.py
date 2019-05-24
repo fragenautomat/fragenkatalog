@@ -42,6 +42,10 @@ class Quiz(models.Model):
         """Return the title with anything between parentheses removed."""
         return re.sub(r'\(.*?\)', '', self.title)
 
+    @property
+    def hashtag_set(self):
+        return set(relation.hashtag for relation in self.quizhashtagrelation_set.all())
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.sluggable_title)
         super().save(*args, **kwargs)
@@ -49,15 +53,26 @@ class Quiz(models.Model):
     def __str__(self):
         return self.title
 
-"""
-quiz1 = Quiz.objects.create(
-    title="Microbiology Quiz",
-    description="Interactive Microbiology Quiz",
-    pubdate=timezone.now()
-)
-quiz2 = Quiz.objects.create(
-    title="Gene Technology Quiz",
-    description="Interactive Gene Technology Quiz",
-    pubdate=timezone.now()
-)
-"""
+
+class HashTag(models.Model):
+    title = models.CharField(max_length=100)
+
+    @property
+    def quiz_set(self):
+        return set(relation.quiz for relation in self.quizhashtagrelation_set.all())
+
+    def __str__(self):
+        return self.title
+
+
+class QuizHashTagRelation(models.Model):
+    hashtag = models.ForeignKey(HashTag, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "Relation between quiz {} and hashtag {}".format(
+            self.quiz,
+            self.hashtag
+        )
+
+
