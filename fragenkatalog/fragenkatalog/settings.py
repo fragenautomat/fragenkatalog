@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fragenkatalog.quizzes',
     'fragenkatalog.questions',
+    'fragenkatalog.social',
 ]
 
 MIDDLEWARE = [

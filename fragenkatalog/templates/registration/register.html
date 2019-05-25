@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block extrabody %}
+    <div class="container">
+      <form action="{% url 'register' %}" method="post" style="margin: auto 0;">
+        {% csrf_token %}
+
+        <div class="card centered border-dark mb-3 hoverable" style="max-width: 30rem; margin-top: 20px;">
+
+        <div class="card-body text-dark">
+
+            <ul class="list-group list-group-flush">
+
+            {% for field in form %}
+
+                <li class="list-group-item">
+                    {% if field.errors %}
+                    <div class="alert alert-danger">{{ field.errors }}</div>
+                    {% endif %}
+                    {{ field.label_tag }} {{ field }}
+                    {% if field.help_text %}
+                    <small>{{ field.help_text|safe }}</small>
+                    {% endif %}
+                </li>
+
+            {% endfor %}
+
+            </ul>
+
+        </div>
+        <div class="card-footer text-light">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">
+            Register
+        </button>
+        </div>
+        </div>
+      </form>
+    </div>
+{% endblock %}

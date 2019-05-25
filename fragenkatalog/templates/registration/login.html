@@ -19,9 +19,9 @@
 {% endif %}
 
 <div class="container">
-<form action="{% url 'login' %}" method="post" class="form-signin" style="margin: auto 0;">
+<form action="{% url 'login' %}" method="post" style="margin: auto 0;">
   {% csrf_token %}
-    <div class="card centered border-dark mb-3 hoverable" style="max-width: 20rem; margin-top: 20px;">
+    <div class="card centered border-dark mb-3 hoverable" style="max-width: 30rem; margin-top: 20px;">
     <div class="card-body text-dark">
     <input type="text" name="username" id="input-username" class="form-control" placeholder="Username" required autofocus>
 

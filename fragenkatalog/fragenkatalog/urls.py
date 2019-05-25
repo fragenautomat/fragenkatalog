@@ -24,15 +24,22 @@ from fragenkatalog.quizzes.urls import urls as quizzes_urls
 from fragenkatalog.questions.urls import urls as questions_urls
 
 urlpatterns = [
+    # Core views
     url(r'^$', views.index, name='index'),
     url(r'^search/', views.search, name='search'),
 
+    # Middleware views
     url(r'i18n/', include('django.conf.urls.i18n')),
 
-    path("accounts/login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
-    path("accounts/logout/", auth_views.LogoutView.as_view(template_name="index.html"), name="logout"),
+    # Account views
+    path("accounts/login/", auth_views.LoginView.as_view(), name="login"),
+    path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("accounts/register/", views.register, name="register"),
+
+    # Management views
     url(r'^admin/', admin.site.urls),
 
+    # Included views
     url(r'^quizzes/', include(quizzes_urls)),
     url(r'^questions/', include(questions_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
