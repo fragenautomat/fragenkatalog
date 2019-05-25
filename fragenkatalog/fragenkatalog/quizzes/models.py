@@ -1,11 +1,15 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
 # Create your models here.
 import re
 
 from django.db import models
+from django.db.models import Count
 from django.utils import timezone
 from django.utils.text import slugify
+
+from fragenkatalog.social.models import Like
 
 
 class Quiz(models.Model):
@@ -27,6 +31,9 @@ class Quiz(models.Model):
     deadline = models.DateTimeField(help_text="Optional date the task is due to", null=True, blank=True)
     image = models.ImageField(upload_to="images", null=True, blank=True)
 
+    # generic relation fields
+    likes = GenericRelation(Like)
+
     @property
     def is_published(self):
         """Return True if the task is already visible to the users."""
@@ -45,6 +52,13 @@ class Quiz(models.Model):
     @property
     def hashtag_set(self):
         return set(relation.hashtag for relation in self.quizhashtagrelation_set.all())
+
+    @property
+    def number_of_likes(self):
+        return len(self.likes.all())
+
+    def liked_by(self, user):
+        return self.likes.filter(created_by=user).exists()
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.sluggable_title)

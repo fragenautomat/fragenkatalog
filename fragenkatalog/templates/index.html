@@ -59,8 +59,14 @@
             Show
         </a>
       {% else %}
-        <btn class="btn btn-outline-secondary" disabled>Coming soon</btn>
+        <button class="btn btn-outline-secondary" disabled>Coming soon</button>
       {% endif %}
+        <button id="like-quiz-{{ quiz.id }}"
+                class="btn btn-outline-dark"
+                {% if not user.is_authenticated %} disabled {% endif %}
+                onclick="like({{ quiz.id }}, '#like-quiz-{{ quiz.id }}', {{ quiz.number_of_likes }})">
+            <span class="fas fa-cookie"></span> {{ quiz.number_of_likes }}
+        </button>
     </div>
     </div>
     {% if forloop.counter|divisibleby:4 %}</div><div class="card-group">{% endif %}
@@ -78,6 +84,29 @@ $(".confirmation-needed").click(function(e) {
         e.preventDefault();
     }
 });
+</script>
+{% endif %}
+
+{% if user.is_authenticated %}
+<script>
+function like(quizId, elemId, numberOfLikes) {
+    var data = {};
+    data["quiz_id"] = quizId;
+    $.ajax({
+        url: "{% url 'like_quiz' %}",
+        type: "post",
+        data: data,
+        headers: {"X-CSRFToken": "{{ csrf_token }}"},
+        datatype: "json",
+        success: function(response) {
+            if (response.success === true) {
+                $(elemId).html(
+                    '<span class="fas fa-cookie-bite"></span> ' + (numberOfLikes + 1)
+                );
+            }
+        }
+    });
+}
 </script>
 {% endif %}
 {% endblock %}
