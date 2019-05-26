@@ -2,10 +2,12 @@
 {% load i18n %}
 {% load staticfiles %}
 {% load highlight %}
+{% load multiply %}
+{% load limit %}
 
 {% block body %}
 
-<div class="container" style="padding-top: 20px;">
+<div class="container" style="padding-top: 20px; margin-top: 20px; background-color: #f8f8f8; border-radius: 8px; ">
 
 
     {% for quiz in quizzes %}
@@ -85,11 +87,28 @@
 
 {% if compilations %}
 
-<div class="container" style="padding-top: 20px; background-color: #f8f8f8; border-radius: 8px; margin-top: 20px;">
+<div class="container" style="padding-top: 20px; margin-top: 20px;">
 
     {% for compilation in compilations %}
     {% if forloop.first %}<div class="card-group">{% endif %}
-    <div class="card border-dark mb-3 hoverable shadow-lg" style="max-width: 18rem;">
+
+    <div class="card border-dark mb-3 hoverable shadow-lg"
+         style="max-width: 18rem;">
+
+    <!-- Cool stacking effect :) -->
+    {% for quiz in compilation.quiz_set.all %}
+    <div class="card border-dark mb-3 hoverable shadow-lg"
+         style="
+             position: absolute;
+             top: {{ -5|multiply:forloop.counter }}px;
+             max-width: inherit;
+             left: {{ -5|multiply:forloop.counter }}px;
+             z-index: {{ forloop.counter|multiply:-1 }};
+             height: 100%;
+             width:  100%;
+         "
+    ></div>
+    {% endfor %}
 
     {% if compilation.image %}
     <img class="card-img-top card-header" style="padding: 0;" src="{{ compilation.image.url }}"
@@ -147,6 +166,7 @@
         </button>
       {% endif %}
     </div>
+
     </div>
     {% if forloop.counter|divisibleby:4 %}</div><div class="card-group">{% endif %}
     {% if forloop.last %}</div>{% endif %}

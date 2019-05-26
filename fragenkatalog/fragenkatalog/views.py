@@ -13,7 +13,7 @@ from fragenkatalog.quizzes.models import Quiz, HashTag
 def index(request):
     return TemplateResponse(request, "index.html", {
         "quizzes": Quiz.objects.all(),
-        "compilations": Compilation.objects.all()
+        "compilations": Compilation.objects.all(),
     })
 
 
@@ -41,7 +41,7 @@ def search(request):
     return TemplateResponse(request, "index.html", {
         "quizzes": quizzes,
         "compilations": compilations,
-        "search": form.cleaned_data["search"]
+        "search": form.cleaned_data["search"],
     })
 
 

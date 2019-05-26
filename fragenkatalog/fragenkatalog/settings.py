@@ -71,6 +71,8 @@ TEMPLATES = [
             ],
             'libraries':{
                 'highlight': 'fragenkatalog.templatetags.highlight',
+                'multiply': 'fragenkatalog.templatetags.multiply',
+                'limit': 'fragenkatalog.templatetags.limit',
             }
         },
     },
