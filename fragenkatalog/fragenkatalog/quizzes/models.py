@@ -60,10 +60,6 @@ class Quiz(models.Model):
     def liked_by(self, user):
         return self.likes.filter(created_by=user).exists()
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.sluggable_title)
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return self.title
 
