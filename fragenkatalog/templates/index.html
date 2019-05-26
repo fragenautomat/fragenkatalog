@@ -122,7 +122,7 @@
     {% endif %}
       <p class="card-text">
         <small class="text-muted">
-          {% blocktrans with time=compilation.pubdate|timesince %}
+          {% blocktrans with time=compilation.created_at|timesince %}
           Published {{ time }} ago.
           {% endblocktrans %}
         </small>
