@@ -5,6 +5,7 @@ from django.contrib.postgres.search import SearchVector
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
+from fragenkatalog.compilations.models import Compilation
 from fragenkatalog.forms import SearchForm, RegistrationForm
 from fragenkatalog.quizzes.models import Quiz, HashTag
 
@@ -12,6 +13,7 @@ from fragenkatalog.quizzes.models import Quiz, HashTag
 def index(request):
     return TemplateResponse(request, "index.html", {
         "quizzes": Quiz.objects.all(),
+        "compilations": Compilation.objects.all()
     })
 
 
@@ -31,8 +33,14 @@ def search(request):
     hashtags = HashTag.objects.filter(title__icontains=query)
     for hashtag in hashtags:
         quizzes.update(hashtag.quiz_set)
+
+    title_compilations = Compilation.objects.filter(title__icontains=query)
+    description_compilations = Compilation.objects.filter(description__icontains=query)
+    compilations = set(title_compilations | description_compilations)
+
     return TemplateResponse(request, "index.html", {
         "quizzes": quizzes,
+        "compilations": compilations,
         "search": form.cleaned_data["search"]
     })
 

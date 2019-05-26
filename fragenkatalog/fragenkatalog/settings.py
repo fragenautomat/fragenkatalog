@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'fragenkatalog.quizzes',
     'fragenkatalog.questions',
     'fragenkatalog.social',
+    'fragenkatalog.compilations',
 ]
 
 MIDDLEWARE = [

@@ -23,6 +23,7 @@ from fragenkatalog import views, settings
 from fragenkatalog.quizzes.urls import urls as quizzes_urls
 from fragenkatalog.questions.urls import urls as questions_urls
 from fragenkatalog.social.urls import urls as social_urls
+from fragenkatalog.compilations.urls import urls as compilations_urls
 
 urlpatterns = [
     # Core views
@@ -44,4 +45,5 @@ urlpatterns = [
     url(r'^quizzes/', include(quizzes_urls)),
     url(r'^questions/', include(questions_urls)),
     url(r'^social/', include(social_urls)),
+    url(r'^compilations/', include(compilations_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
