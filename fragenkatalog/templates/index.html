@@ -7,8 +7,7 @@
 
 {% block body %}
 
-<div class="container" style="padding-top: 20px; margin-top: 20px; background-color: #f8f8f8; border-radius: 8px; ">
-
+<div class="container rounded" style="background-color: #f8f8f8; margin-top: 20px; padding-top: 20px;">
 
     {% for quiz in quizzes %}
     {% if forloop.first %}<div class="card-group">{% endif %}
@@ -83,11 +82,30 @@
     {% if forloop.counter|divisibleby:4 %}</div><div class="card-group">{% endif %}
     {% if forloop.last %}</div>{% endif %}
     {% endfor %}
+
+    {% if quizzes.paginator %}
+    <nav aria-label="Quiz pagination" style="padding-bottom: 5px;">
+        <ul class="pagination">
+            {% if quizzes.has_previous %}
+                <li class="page-item"><a class="page-link" href="?quiz_page=1">1</a></li>
+                <li class="page-item"><a class="page-link" href="?quiz_page={{ quizzes.previous_page_number }}">Previous</a></li>
+            {% endif %}
+
+            <li class="page-item"><span class="page-link" href="#">Page {{ quizzes.number }} of {{ quizzes.paginator.num_pages }}</span></li>
+
+            {% if quizzes.has_next %}
+                <li class="page-item text-dark bg-primary"><a class="page-link" href="?quiz_page={{ quizzes.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?quiz_page={{ quizzes.paginator.num_pages }}">Last</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 
 {% if compilations %}
 
-<div class="container" style="padding-top: 20px; margin-top: 20px;">
+
+<div class="container pt-4 md-5 pt-md-5" style="padding-top: 20px; margin-top: 20px;">
 
     {% for compilation in compilations %}
     {% if forloop.first %}<div class="card-group">{% endif %}
@@ -171,6 +189,24 @@
     {% if forloop.counter|divisibleby:4 %}</div><div class="card-group">{% endif %}
     {% if forloop.last %}</div>{% endif %}
     {% endfor %}
+
+    {% if compilations.paginator %}
+    <nav aria-label="Compilation pagination" style="padding-bottom: 5px;">
+        <ul class="pagination">
+            {% if compilations.has_previous %}
+                <li class="page-item"><a class="page-link" href="?compilation_page=1">1</a></li>
+                <li class="page-item"><a class="page-link" href="?compilation_page={{ compilations.previous_page_number }}">Previous</a></li>
+            {% endif %}
+
+            <li class="page-item"><span class="page-link" href="#">Page {{ compilations.number }} of {{ compilations.paginator.num_pages }}</span></li>
+
+            {% if compilations.has_next %}
+                <li class="page-item text-dark bg-primary"><a class="page-link" href="?compilation_page={{ compilations.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?compilation_page={{ compilations.paginator.num_pages }}">Last</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 
 </div>
 

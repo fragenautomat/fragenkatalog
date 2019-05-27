@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.postgres.search import SearchVector
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
@@ -11,9 +12,21 @@ from fragenkatalog.quizzes.models import Quiz, HashTag
 
 
 def index(request):
+    quizzes = Quiz.objects.all()
+    if len(quizzes) > 4:
+        quiz_paginator = Paginator(quizzes, 4)
+        quiz_page = request.GET.get("quiz_page")
+        quizzes = quiz_paginator.get_page(quiz_page)
+
+    compilations = Compilation.objects.all()
+    if len(compilations) > 4:
+        compilation_paginator = Paginator(compilations, 4)
+        compilation_page = request.GET.get("compilation_page")
+        compilations = compilation_paginator.get_page(compilation_page)
+
     return TemplateResponse(request, "index.html", {
-        "quizzes": Quiz.objects.all(),
-        "compilations": Compilation.objects.all(),
+        "quizzes": quizzes,
+        "compilations": compilations,
     })
 
 
