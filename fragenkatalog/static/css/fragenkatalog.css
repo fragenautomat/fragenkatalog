@@ -49,3 +49,7 @@ footer {
   bottom: 0;
   width: 100%;
 }
+
+.correct {
+    color: #2ecc71 !important;
+}

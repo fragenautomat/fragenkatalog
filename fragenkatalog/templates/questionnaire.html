@@ -12,27 +12,42 @@
     <img class="card-img-top card-header" src="{{ question.image.url }}"
          style="max-height: 30rem; object-fit: contain;">
     {% endif %}
-    <h5 class="card-header" style="padding: 1rem;">{{ question.description }}
-    <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
-           role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
-        <span class="fas fa-chevron-down"></span>
-    </a>
-    </h5>
-    <div class="bg-light text-dark">
-      <div class="collapse" id="collapse-{{ forloop.counter }}">
-        {% if question.multiplechoicequestion %}
+    <h5 class="card-header" style="padding: 1rem;">{{ question.description }}</h5>
+    {% if question.multiplechoicequestion %}
+    <div class="card-body">
             {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
-            <div class="form-check" style="margin: 1rem;">
+            <div class="form-check">
               <input class="form-check-input" type="checkbox" value="" id="check-{{ forloop.counter }}">
               <label class="form-check-label" for="check-{{ forloop.counter }}">
                 {{ choice.option_description }}
               </label>
             </div>
             {% endfor %}
+    </div>
+    {% endif %}
+    <div class="card-body bg-light text-dark">
+      <a class="btn btn-outline-primary " data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
+           role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
+        <span class="fas fa-chevron-down"></span> Show answer
+      </a>
+      <div class="collapse" id="collapse-{{ forloop.counter }}">
+        <div style="height: 20px;"></div>
+
+        {% if question.multiplechoicequestion %}
+            {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
+            <div class="form-check {% if choice.is_solution %}correct{% endif %}">
+              <input class="form-check-input" type="checkbox" value="" id="check-{{ forloop.counter }}" {% if choice.is_solution %}checked{% endif %}>
+              <label class="form-check-label" for="check-{{ forloop.counter }}">
+                {{ choice.option_description }}
+              </label>
+            </div>
+            {% endfor %}
         {% endif %}
+
         {% if question.textualquestion %}
-                <p style="padding: 1rem;" class="card-text">{{ question.textualquestion.solution }}</p>
+                <p class="card-text">{{ question.textualquestion.solution }}</p>
         {% endif %}
+
       </div>
     </div>
   </div>
