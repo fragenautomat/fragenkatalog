@@ -38,6 +38,7 @@
           <div class="dropdown-menu" aria-labelledby="dropdown-account">
               {% if user.is_authenticated %}
             <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+            <a class="dropdown-item" href="{% url 'my_quizzes' %}">My Quizzes</a>
               {% else %}
             <a class="dropdown-item" href="{% url 'login' %}">Login</a>
             <a class="dropdown-item" href="{% url 'register' %}">Register</a>

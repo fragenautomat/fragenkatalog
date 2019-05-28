@@ -9,79 +9,106 @@
 
 <div class="container rounded" style="background-color: #f8f8f8; margin-top: 20px; padding-top: 20px;">
 
-    {% for quiz in quizzes %}
-    {% if forloop.first %}<div class="card-group">{% endif %}
-    <div class="card border-dark mb-3 hoverable shadow-lg" style="max-width: 18rem;">
+    <div class="card-deck">
 
-    {% if quiz.image %}
-    <img class="card-img-top card-header" style="padding: 0;" src="{{ quiz.image.url }}"
-         style="max-height: 30rem; object-fit: contain;">
-    {% else %}
-    <div class="card-header text-center text-light bg-primary">
-      <span class="fas fa-question-circle" style="font-size: 100px;"></span>
-    </div>
-    {% endif %}
-    <div class="card-body text-dark">
-      <h5 class="card-title">
-          {% if search %}
-          {{ quiz.title|highlight:search }}
-          {% else %}
-          {{ quiz.title }}
-          {% endif %}
-          <small class="text-black-50">(Quiz)</small>
-      </h5>
-      <p class="card-text">
-          {% if search %}
-          {{ quiz.description|highlight:search }}
-          {% else %}
-          {{ quiz.description }}
-          {% endif %}
-      </p>
-    {% if quiz.question_set.count > 0 %}
-        <span class="card-text badge badge-secondary">
-          {{ quiz.question_set.count }} question{{ quiz.question_set.count|pluralize:"s" }}
-        </span>
-    {% endif %}
-    {% for hashtag in quiz.hashtag_set %}
-        <span class="card-text badge badge-secondary">
-          {% if search %}
-          {{ hashtag|highlight:search }}
-          {% else %}
-          {{ hashtag }}
-          {% endif %}
-        </span>
-    {% endfor %}
-      <p class="card-text">
-        <small class="text-muted">
-          {% blocktrans with time=quiz.pubdate|timesince %}
-          Published {{ time }} ago.
-          {% endblocktrans %}
-        </small>
-      </p>
-      {% if quiz.question_set.count > 0 %}
-        <a class="btn btn-outline-primary" href="{% url 'questionnaire' quiz.id %}">
-            Show
-        </a>
-      {% else %}
-        <button class="btn btn-outline-secondary" disabled>Coming soon</button>
-      {% endif %}
-        {% if user in quiz.likers %}
-        <button class="btn btn-outline-secondary" disabled>
-            <span class="fas fa-thumbs-up"></span> {{ quiz.likes.count }}
-        </button>
-        {% else %}
-        <button id="like-quiz-{{ quiz.id }}"
-                class="btn btn-outline-dark"
-                {% if not user.is_authenticated %} disabled {% endif %}
-                onclick="likeQuiz({{ quiz.id }}, '#like-quiz-{{ quiz.id }}', {{ quiz.likes.count }})">
-            <span class="far fa-thumbs-up"></span> {{ quiz.likes.count }}
-        </button>
+        {% for quiz in quizzes %}
+        <div class="card border-dark mb-3 hoverable shadow-lg" style="width: 16rem;">
+
+            {% if quiz.image %}
+            <img class="card-img-top card-header"
+                 style="padding: 0; max-height: 30rem; object-fit: contain;" src="{{ quiz.image.url }}">
+            {% else %}
+            <div class="card-header text-center text-light bg-primary">
+              <span class="fas fa-question-circle" style="font-size: 100px;"></span>
+            </div>
+            {% endif %}
+
+            <div class="card-body text-dark">
+              <h5 class="card-title">
+                  {% if search %}
+                  {{ quiz.title|highlight:search }}
+                  {% else %}
+                  {{ quiz.title }}
+                  {% endif %}
+                  <small class="text-black-50">(Quiz)</small>
+              </h5>
+              <p class="card-text" style="max-height: 10rem !important; overflow-y: scroll">
+                {% with quiz.description|linebreaksbr as description %}
+                  {% if search %}
+                  {{ description|highlight:search }}
+                  {% else %}
+                  {{ description }}
+                  {% endif %}
+                {% endwith %}
+              </p>
+            {% for hashtag in quiz.hashtag_set %}
+                <span class="card-text badge badge-secondary">
+                  {% if search %}
+                  {{ hashtag|highlight:search }}
+                  {% else %}
+                  {{ hashtag }}
+                  {% endif %}
+                </span>
+            {% endfor %}
+              {% if quiz.question_set.count > 0 %}
+                <a class="btn btn-outline-primary" href="{% url 'questionnaire' quiz.id %}">
+                    Show
+                </a>
+              {% else %}
+                <button class="btn btn-outline-secondary" disabled>Coming soon</button>
+              {% endif %}
+
+              {% if user in quiz.likers %}
+                <button class="btn btn-outline-secondary mb-1 mt-1" disabled>
+                    <span class="fas fa-thumbs-up"></span> {{ quiz.likes.count }}
+                </button>
+                {% else %}
+                <button id="like-quiz-{{ quiz.id }}"
+                        class="btn btn-outline-dark mb-1 mt-1"
+                        {% if not user.is_authenticated %} disabled {% endif %}
+                        onclick="likeQuiz({{ quiz.id }}, '#like-quiz-{{ quiz.id }}', {{ quiz.likes.count }})">
+                    <span class="far fa-thumbs-up"></span> {{ quiz.likes.count }}
+                </button>
+              {% endif %}
+
+              {% if user.is_authenticated and quiz.created_by == user %}
+                    <a class="btn btn-secondary mb-1 mt-1" href="{% url 'edit_quiz' quiz.id %}">Add questions</a>
+                <a class="btn btn-danger confirmation-needed mb-1 mt-1"
+                       href="{% url 'delete_quiz' quiz.id %}">Delete Quiz</a>
+              {% endif %}
+            </div>
+
+            <div class="card-footer">
+                {% if quiz.question_set.count > 0 %}
+                <span class="card-text badge badge-secondary">
+                  {{ quiz.question_set.count }} question{{ quiz.question_set.count|pluralize:"s" }}
+                </span>
+            {% endif %}
+                  <small class="text-muted">
+                      {% with time=quiz.created_at|timesince %}
+                  created {{ time }} ago by @<strong>{{ quiz.created_by.username }}</strong>.
+                  {% endwith %}
+                  </small>
+                </div>
+        </div>
+        {% endfor %}
+
+        {% if user.is_authenticated %}
+        <form action="{% url 'new_quiz' %}" method="post">
+            {% csrf_token %}
+            <div class="card border-dark mb-3 hoverable shadow-lg" style="width: 16rem;">
+                <div class="card-header text-center text-light bg-secondary">
+                  <span class="fas fa-plus" style="font-size: 100px;"></span>
+                </div>
+                    <input type="text" name="title" class="form-control border-radius-0"
+                       placeholder="Title" aria-label="Title">
+                <textarea name="description" class="form-control border-radius-0"
+                          placeholder="Description" aria-label="Description"></textarea>
+                <button type="submit" class="card-footer"><span class="fas fa-plus"></span> Create new Quiz</button>
+            </div>
+        </form>
         {% endif %}
     </div>
-    </div>
-    {% if forloop.counter|divisibleby:4 %}</div><div class="card-group">{% endif %}
-    {% if forloop.last %}</div>{% endif %}
-    {% endfor %}
 
     {% if quizzes.paginator %}
     <nav aria-label="Quiz pagination" style="padding-bottom: 5px;">
@@ -97,7 +124,7 @@
             {% if quizzes.has_next %}
                 <li class="page-item text-dark"><a class="page-link" href="?quiz_page={{ quizzes.next_page_number }}">Next</a></li>
             {% else %}
-                <li class="page-item text-dark disabled"><a class="page-link" href="?quiz_page={{ quizzes.next_page_number }}">Next</a></li>
+                <li class="page-item text-dark disabled"><a class="page-link" href="#">Next</a></li>
             {% endif %}
         </ul>
     </nav>
@@ -131,8 +158,8 @@
     {% endfor %}
 
     {% if compilation.image %}
-    <img class="card-img-top card-header" style="padding: 0;" src="{{ compilation.image.url }}"
-         style="max-height: 30rem; object-fit: contain;">
+    <img class="card-img-top card-header" src="{{ compilation.image.url }}"
+         style="max-height: 30rem; object-fit: contain; padding: 0;">
     {% else %}
     <div class="card-header text-center text-light bg-primary">
       <span class="fas fa-layer-group" style="font-size: 100px;"></span>
@@ -268,6 +295,8 @@ function likeCompilation(compilationId, elemId, numberOfLikes) {
         }
     });
 }
+
 </script>
 {% endif %}
+
 {% endblock %}

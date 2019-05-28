@@ -1,4 +1,7 @@
+import re
+
 from django.db import models
+from django.db.transaction import atomic
 
 from fragenkatalog.quizzes.models import Quiz
 
@@ -22,8 +25,31 @@ class TextualQuestion(Question):
 
 
 class MultipleChoiceQuestion(Question):
-    # mandatory fields
-    pass
+    @staticmethod
+    def create(description, quiz, solution, image):
+        correct_answers = list()
+        incorrect_answers = list()
+        for line in solution.strip().splitlines():
+            if line.strip().startswith("- [ ]"):
+                incorrect_answers.append(line.replace("- [ ]", "").strip())
+                continue
+            if line.strip().startswith("- [x]"):
+                correct_answers.append(line.replace("- [x]", "").strip())
+                continue
+            raise ValueError()
+        with atomic():
+            question = MultipleChoiceQuestion.objects.create(
+                description=description, quiz=quiz, image=image
+            )
+            for answer in correct_answers:
+                MultipleChoiceOption.objects.create(
+                    question=question, is_solution=True, option_description=answer
+                )
+            for answer in incorrect_answers:
+                MultipleChoiceOption.objects.create(
+                    question=question, is_solution=False, option_description=answer
+                )
+        return question
 
 
 class MultipleChoiceOption(models.Model):

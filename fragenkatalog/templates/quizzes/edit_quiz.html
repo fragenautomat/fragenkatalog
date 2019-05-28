@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div class="container" style="padding-top: 20px;">
+
+{% if not user.is_authenticated or quiz.created_by != user %}
+
+    <div class="alert alert-danger">You are not allowed to change this quiz.</div>
+
+{% else %}
+
+    <form action="{% url 'new_question' quiz.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card border-dark shadow-lg" style="margin-top: 20px;">
+            <textarea name="description" class="form-control border-radius-0 card-header"
+                      placeholder="Description" aria-label="Description"></textarea>
+            <textarea name="solution" class="form-control border-radius-0 card-body"
+                      placeholder="Solution" aria-label="Solution"></textarea>
+            <div class="custom-file">
+              <input type="file" accept="image/*" class="custom-file-input" id="image">
+              <label class="custom-file-label" for="image">Choose a descriptive image (optional)</label>
+            </div>
+            <button type="submit" class="card-footer"><span class="fas fa-plus"></span> Create new question</button>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-sm">
+            <h5 style="padding-top: 5rem;"><span class="fas fa-angle-right"></span> Adding new Questions</h5>
+            <p>
+                To add new questions, simply type the title and the description of each question
+                into the corresponding fields and select <code class="rounded bg-light p-1">Create new question</code>.
+                You may as well choose a descriptive image by clicking on the corresponding button.
+            </p>
+        </div>
+        <div class="col-sm">
+            <h5 style="padding-top: 5rem;"><span class="fas fa-angle-right"></span> Multiple Choice Questions</h5>
+            <p>
+                To add a multiple choice question, add a description first and then use the following syntax
+                for the solution. The server will automatically create a multiple choice question for you:
+            </p>
+            <div class="rounded bg-light text-dark p-1">
+                <code>- [ ] Option A</code><br>
+                <code>- [ ] Option B</code><br>
+                <code>- [x] Option C (correct)</code><br>
+                <code>- [ ] Option D</code><br>
+                <code>- [x] Option E (also correct)</code><br>
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

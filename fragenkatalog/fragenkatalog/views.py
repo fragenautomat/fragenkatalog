@@ -7,18 +7,19 @@ from django.template.response import TemplateResponse
 from fragenkatalog.compilations.models import Compilation
 from fragenkatalog.forms import SearchForm, RegistrationForm
 from fragenkatalog.quizzes.models import Quiz, HashTag
+from fragenkatalog.responses import reload
 
 
 def index(request):
     quizzes = Quiz.objects.all()
-    if len(quizzes) > 4:
-        quiz_paginator = Paginator(quizzes, 4)
+    if len(quizzes) > 3:
+        quiz_paginator = Paginator(quizzes, 3)
         quiz_page = request.GET.get("quiz_page")
         quizzes = quiz_paginator.get_page(quiz_page)
 
     compilations = Compilation.objects.all()
-    if len(compilations) > 4:
-        compilation_paginator = Paginator(compilations, 4)
+    if len(compilations) > 3:
+        compilation_paginator = Paginator(compilations, 3)
         compilation_page = request.GET.get("compilation_page")
         compilations = compilation_paginator.get_page(compilation_page)
 
@@ -31,10 +32,10 @@ def index(request):
 def search(request):
     if not request.method == "POST":
         messages.debug(request, "Search is only allowed via POST.")
-        return HttpResponseRedirect("/")
+        return reload(request)
     form = SearchForm(request.POST)
     if not form.is_valid():
-        return HttpResponseRedirect("/")
+        return reload(request)
     query = form.cleaned_data["search"]
     if not query:
         return index(request)

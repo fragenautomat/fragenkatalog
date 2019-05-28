@@ -5,42 +5,48 @@ from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
 from fragenkatalog.questions.forms import NewTextualQuestionForm
-from fragenkatalog.questions.models import TextualQuestion
+from fragenkatalog.questions.models import TextualQuestion, Question, MultipleChoiceQuestion
 from fragenkatalog.quizzes.models import Quiz
+from fragenkatalog.responses import reload
 
 
 @login_required
 def new_question(request, quiz_id):
-    if not request.user.is_superuser:
-        messages.error(request, "To create a new question, you need to be logged in as admin.")
-        return HttpResponseRedirect("/")
     if not request.method == "POST":
         messages.debug(request, "Question creation is only allowed via POST.")
-        return HttpResponseRedirect("/")
+        return reload(request)
     form = NewTextualQuestionForm(request.POST, request.FILES)
     if not form.is_valid():
         print(form.errors)
         messages.error(request, "The submitted form is incorrect.")
-        return HttpResponseRedirect("/")
+        return reload(request)
     associated_quiz = Quiz.objects.get(id=quiz_id)
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
-        return HttpResponseRedirect("/")
-    print(form.cleaned_data["image"])
-    TextualQuestion.objects.create(
-        description=form.cleaned_data["description"],
-        solution=form.cleaned_data["solution"],
-        quiz=associated_quiz,
-        image=form.cleaned_data["image"]
-    )
-    messages.success(request, "A new question was added!")
-    return HttpResponseRedirect("/")
+        return reload(request)
+    try:
+        MultipleChoiceQuestion.create(
+            description=form.cleaned_data["description"],
+            solution=form.cleaned_data["solution"],
+            quiz=associated_quiz,
+            image=form.cleaned_data["image"]
+        )
+        messages.success(request, "A new multiple choice question was added!")
+    except ValueError:
+        TextualQuestion.objects.create(
+            description=form.cleaned_data["description"],
+            solution=form.cleaned_data["solution"],
+            quiz=associated_quiz,
+            image=form.cleaned_data["image"]
+        )
+        messages.success(request, "A new textual question was added!")
+    return reload(request)
 
 def questionnaire(request, quiz_id):
     associated_quiz = Quiz.objects.get(id=quiz_id)
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
-        return HttpResponseRedirect("/")
+        return reload(request)
     questions = associated_quiz.question_set.all()
     question_paginator = Paginator(questions, 1)
     question_page = request.GET.get("question")
