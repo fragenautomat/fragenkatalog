@@ -12,7 +12,7 @@
     <div class="card-deck">
 
         {% for quiz in quizzes %}
-        <div class="card border-dark mb-3 hoverable shadow-lg" style="width: 16rem;">
+        <div class="card border-dark mb-3 hoverable shadow-lg" style="width: 16rem; min-width: 16rem;">
 
             {% if quiz.image %}
             <img class="card-img-top card-header"
@@ -41,15 +41,6 @@
                   {% endif %}
                 {% endwith %}
               </p>
-            {% for hashtag in quiz.hashtag_set %}
-                <span class="card-text badge badge-secondary">
-                  {% if search %}
-                  {{ hashtag|highlight:search }}
-                  {% else %}
-                  {{ hashtag }}
-                  {% endif %}
-                </span>
-            {% endfor %}
               {% if quiz.question_set.count > 0 %}
                 <a class="btn btn-outline-primary" href="{% url 'questionnaire' quiz.id %}">
                     Show
@@ -79,6 +70,15 @@
             </div>
 
             <div class="card-footer">
+                {% for hashtag in quiz.hashtag_set %}
+                <span class="card-text badge badge-secondary">
+                  {% if search %}
+                  {{ hashtag|highlight:search }}
+                  {% else %}
+                  {{ hashtag }}
+                  {% endif %}
+                </span>
+                {% endfor %}
                 {% if quiz.question_set.count > 0 %}
                 <span class="card-text badge badge-secondary">
                   {{ quiz.question_set.count }} question{{ quiz.question_set.count|pluralize:"s" }}
@@ -96,7 +96,7 @@
         {% if user.is_authenticated %}
         <form action="{% url 'new_quiz' %}" method="post">
             {% csrf_token %}
-            <div class="card border-dark mb-3 hoverable shadow-lg" style="width: 16rem;">
+            <div class="card border-dark mb-3 hoverable shadow-lg" style="width: 16rem; min-width: 16rem;">
                 <div class="card-header text-center text-light bg-secondary">
                   <span class="fas fa-plus" style="font-size: 100px;"></span>
                 </div>

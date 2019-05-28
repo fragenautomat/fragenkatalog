@@ -10,7 +10,7 @@
 
 {% else %}
 
-    <form action="{% url 'new_question' quiz.id %}" method="post" enctype="multipart/form-data">
+    <form enctype="multipart/form-data" action="{% url 'new_question' quiz.id %}" method="post">
         {% csrf_token %}
         <div class="card border-dark shadow-lg" style="margin-top: 20px;">
             <textarea name="description" class="form-control border-radius-0 card-header"
@@ -18,8 +18,8 @@
             <textarea name="solution" class="form-control border-radius-0 card-body"
                       placeholder="Solution" aria-label="Solution"></textarea>
             <div class="custom-file">
-              <input type="file" accept="image/*" class="custom-file-input" id="image">
-              <label class="custom-file-label" for="image">Choose a descriptive image (optional)</label>
+              <input type="file" accept="image/*" class="custom-file-input" id="image" name="image">
+              <label class="custom-file-label" for="image" id="image-label">Choose a descriptive image (optional)</label>
             </div>
             <button type="submit" class="card-footer"><span class="fas fa-plus"></span> Create new question</button>
         </div>
@@ -54,4 +54,12 @@
 
 </div>
 
+{% endblock %}
+
+{% block extrabody %}
+<script>
+$("#image").on("change", function(){
+    $("#image-label").text($("#image").val().split('\\').pop())
+});
+</script>
 {% endblock %}

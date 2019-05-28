@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
-from fragenkatalog.questions.forms import NewTextualQuestionForm
+from fragenkatalog.questions.forms import NewQuestionForm
 from fragenkatalog.questions.models import TextualQuestion, Question, MultipleChoiceQuestion
 from fragenkatalog.quizzes.models import Quiz
 from fragenkatalog.responses import reload
@@ -15,7 +15,7 @@ def new_question(request, quiz_id):
     if not request.method == "POST":
         messages.debug(request, "Question creation is only allowed via POST.")
         return reload(request)
-    form = NewTextualQuestionForm(request.POST, request.FILES)
+    form = NewQuestionForm(request.POST, request.FILES)
     if not form.is_valid():
         print(form.errors)
         messages.error(request, "The submitted form is incorrect.")
@@ -24,6 +24,7 @@ def new_question(request, quiz_id):
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
         return reload(request)
+    print(form.cleaned_data["image"])
     try:
         MultipleChoiceQuestion.create(
             description=form.cleaned_data["description"],
