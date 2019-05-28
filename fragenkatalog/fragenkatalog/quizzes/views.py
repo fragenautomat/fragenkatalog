@@ -37,7 +37,7 @@ def new_quiz(request):
     if not request.method == "POST":
         messages.debug(request, "Quiz creation is only allowed via POST.")
         return reload(request)
-    form = NewQuizForm(request.POST)
+    form = NewQuizForm(request.POST, request.FILES)
     if not form.is_valid():
         messages.error(request, "The submitted form is incorrect.")
         return reload(request)
@@ -49,6 +49,7 @@ def new_quiz(request):
     quiz = Quiz.objects.create(
         title=form.cleaned_data["title"],
         description=form.cleaned_data["description"],
+        image=form.cleaned_data["image"],
         created_by=request.user
     )
     messages.success(request, "A new quiz was created!")

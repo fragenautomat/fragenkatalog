@@ -57,9 +57,15 @@
 {% endblock %}
 
 {% block extrabody %}
+
+{% if user.is_authenticated %}
+
 <script>
 $("#image").on("change", function(){
     $("#image-label").text($("#image").val().split('\\').pop())
 });
 </script>
+
+{% endif %}
+
 {% endblock %}
