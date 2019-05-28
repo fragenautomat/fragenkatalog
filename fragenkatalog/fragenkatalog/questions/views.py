@@ -30,7 +30,6 @@ def new_question(request, quiz_id):
     TextualQuestion.objects.create(
         description=form.cleaned_data["description"],
         solution=form.cleaned_data["solution"],
-        position=associated_quiz.textualquestion_set.count(),
         quiz=associated_quiz,
         image=form.cleaned_data["image"]
     )
@@ -42,7 +41,7 @@ def questionnaire(request, quiz_id):
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
         return HttpResponseRedirect("/")
-    questions = associated_quiz.textualquestion_set.all()
+    questions = associated_quiz.question_set.all()
     question_paginator = Paginator(questions, 1)
     question_page = request.GET.get("question")
     questions = question_paginator.get_page(question_page)

@@ -6,34 +6,37 @@
 
 <div class="container" style="padding-top: 20px; padding-bottom: 100px;">
 
-    <div id="carousel" class="carousel slide"
-         style="margin-bottom: 20px;"
-         data-ride="carousel" data-interval="false">
-      <div class="carousel-inner">
-      {% for question in questions %}
-        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <div class="card border-dark">
-                {% if question.image %}
-                <img class="card-img-top card-header" src="{{ question.image.url }}"
-                     style="max-height: 30rem; object-fit: contain;">
-                {% endif %}
-                <h5 class="card-header" style="padding: 1rem;">
-                    {{ question.description }}
-                <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
-                   role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
-                    <span class="fas fa-chevron-down"></span>
-                </a>
-                </h5>
-                <div class="bg-primary text-light">
-                  <div class="collapse" id="collapse-{{ forloop.counter }}">
-                    <p style="padding: 1rem;" class="card-text">{{ question.solution }}</p>
-                  </div>
-                </div>
+  {% for question in questions %}
+  <div class="card border-dark">
+    {% if question.image %}
+    <img class="card-img-top card-header" src="{{ question.image.url }}"
+         style="max-height: 30rem; object-fit: contain;">
+    {% endif %}
+    <h5 class="card-header" style="padding: 1rem;">{{ question.description }}
+    <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
+           role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
+        <span class="fas fa-chevron-down"></span>
+    </a>
+    </h5>
+    <div class="bg-light text-dark">
+      <div class="collapse" id="collapse-{{ forloop.counter }}">
+        {% if question.multiplechoicequestion %}
+            {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
+            <div class="form-check" style="margin: 1rem;">
+              <input class="form-check-input" type="checkbox" value="" id="check-{{ forloop.counter }}">
+              <label class="form-check-label" for="check-{{ forloop.counter }}">
+                {{ choice.option_description }}
+              </label>
             </div>
-        </div>
-      {% endfor %}
+            {% endfor %}
+        {% endif %}
+        {% if question.textualquestion %}
+                <p style="padding: 1rem;" class="card-text">{{ question.textualquestion.solution }}</p>
+        {% endif %}
       </div>
     </div>
+  </div>
+  {% endfor %}
 
     <!--
     {% if user.is_authenticated and user.is_superuser %}
@@ -55,7 +58,7 @@
     -->
 
     {% if questions.paginator %}
-    <nav aria-label="Question pagination" style="padding-bottom: 5px;">
+    <nav aria-label="Question pagination" style="padding-bottom: 5px; margin-top: 20px;">
         <ul class="pagination">
             {% if questions.has_previous %}
                 <li class="page-item"><a class="page-link" href="?question={{ questions.previous_page_number }}">Previous</a></li>

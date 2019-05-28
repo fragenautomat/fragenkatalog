@@ -37,9 +37,9 @@
           {{ quiz.description }}
           {% endif %}
       </p>
-    {% if quiz.textualquestion_set.count > 0 %}
+    {% if quiz.question_set.count > 0 %}
         <span class="card-text badge badge-secondary">
-          {{ quiz.textualquestion_set.count }} question{{ quiz.textualquestion_set.count|pluralize:"s" }}
+          {{ quiz.question_set.count }} question{{ quiz.question_set.count|pluralize:"s" }}
         </span>
     {% endif %}
     {% for hashtag in quiz.hashtag_set %}
@@ -58,7 +58,7 @@
           {% endblocktrans %}
         </small>
       </p>
-      {% if quiz.textualquestion_set.count > 0 %}
+      {% if quiz.question_set.count > 0 %}
         <a class="btn btn-outline-primary" href="{% url 'questionnaire' quiz.id %}">
             Show
         </a>
