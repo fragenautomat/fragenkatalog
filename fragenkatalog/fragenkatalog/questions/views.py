@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
@@ -41,7 +42,12 @@ def questionnaire(request, quiz_id):
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
         return HttpResponseRedirect("/")
+    questions = associated_quiz.textualquestion_set.all()
+    question_paginator = Paginator(questions, 1)
+    question_page = request.GET.get("question")
+    questions = question_paginator.get_page(question_page)
+
     return TemplateResponse(request, "questionnaire.html", {
         "quiz": associated_quiz,
-        "questions": associated_quiz.textualquestion_set.all()
+        "questions": questions
     })
