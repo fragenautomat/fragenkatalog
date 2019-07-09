@@ -12,17 +12,17 @@
     <img class="card-img-top card-header" src="{{ question.image.url }}"
          style="max-height: 30rem; object-fit: contain;">
     {% endif %}
-    <h5 class="card-header" style="padding: 1rem;">{{ question.description }}</h5>
+    <h5 class="card-header" style="padding: 1rem;">{{ question.description|linebreaks }}</h5>
     {% if question.multiplechoicequestion %}
     <div class="card-body">
-            {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="check-{{ forloop.counter }}">
-              <label class="form-check-label" for="check-{{ forloop.counter }}">
-                {{ choice.option_description }}
-              </label>
-            </div>
-            {% endfor %}
+        {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="check-{{ forloop.counter }}">
+          <label class="form-check-label" for="check-{{ forloop.counter }}">
+            {{ choice.option_description }}
+          </label>
+        </div>
+        {% endfor %}
     </div>
     {% endif %}
     <div class="card-body bg-light text-dark">
@@ -45,7 +45,7 @@
         {% endif %}
 
         {% if question.textualquestion %}
-                <p class="card-text">{{ question.textualquestion.solution }}</p>
+                <p class="card-text">{{ question.textualquestion.solution|linebreaks }}</p>
         {% endif %}
 
       </div>
