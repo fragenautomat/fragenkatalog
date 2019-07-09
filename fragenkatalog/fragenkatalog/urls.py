@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
-
+from django.conf import settings
 from fragenkatalog import views, settings
 from fragenkatalog.quizzes.urls import urls as quizzes_urls
 from fragenkatalog.questions.urls import urls as questions_urls
@@ -46,4 +46,4 @@ urlpatterns = [
     url(r'^questions/', include(questions_urls)),
     url(r'^social/', include(social_urls)),
     url(r'^compilations/', include(compilations_urls)),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
