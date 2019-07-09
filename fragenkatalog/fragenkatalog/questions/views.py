@@ -17,8 +17,7 @@ def new_question(request, quiz_id):
         return reload(request)
     form = NewQuestionForm(request.POST, request.FILES)
     if not form.is_valid():
-        print(form.errors)
-        messages.error(request, "The submitted form is incorrect.")
+        messages.error(request, "The submitted form is incorrect: {}".format(form.errors))
         return reload(request)
     associated_quiz = Quiz.objects.get(id=quiz_id)
     if not associated_quiz:
