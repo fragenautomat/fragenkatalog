@@ -81,8 +81,12 @@
             {% else %}
                 <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
             {% endif %}
+
+            <li class="page-item"><a class="page-link" href="?question={{ questions.paginator.random_page_number }}"><span class="fas fa-dice"></span> Random</a></li>
         </ul>
     </nav>
+
+
     {% endif %}
 
 </div>

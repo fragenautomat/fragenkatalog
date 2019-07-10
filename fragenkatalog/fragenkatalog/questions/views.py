@@ -8,6 +8,7 @@ from fragenkatalog.questions.forms import NewQuestionForm
 from fragenkatalog.questions.models import TextualQuestion, Question, MultipleChoiceQuestion
 from fragenkatalog.quizzes.models import Quiz
 from fragenkatalog.responses import reload
+from fragenkatalog.questions.tools import RandomizablePaginator
 
 
 @login_required
@@ -48,7 +49,7 @@ def questionnaire(request, quiz_id):
         messages.error(request, "No associated quiz found.")
         return reload(request)
     questions = associated_quiz.question_set.all()
-    question_paginator = Paginator(questions, 1)
+    question_paginator = RandomizablePaginator(questions, 1)
     question_page = request.GET.get("question")
     questions = question_paginator.get_page(question_page)
 
