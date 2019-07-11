@@ -16,8 +16,8 @@ class Question(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # optional fields
-    image = models.ImageField(upload_to="images", null=True, blank=True)
-
+    description_image = models.ImageField(upload_to="images", null=True, blank=True)
+    solution_image = models.ImageField(upload_to="images", null=True, blank=True)
 
 class TextualQuestion(Question):
     # mandatory fields
@@ -26,7 +26,7 @@ class TextualQuestion(Question):
 
 class MultipleChoiceQuestion(Question):
     @staticmethod
-    def create(description, quiz, solution, image):
+    def create(description, quiz, solution, description_image, solution_image):
         correct_answers = list()
         incorrect_answers = list()
         for line in solution.strip().splitlines():
@@ -39,7 +39,7 @@ class MultipleChoiceQuestion(Question):
             raise ValueError()
         with atomic():
             question = MultipleChoiceQuestion.objects.create(
-                description=description, quiz=quiz, image=image
+                description=description, quiz=quiz, description_image=description_image, solution_image=solution_image
             )
             for answer in correct_answers:
                 MultipleChoiceOption.objects.create(

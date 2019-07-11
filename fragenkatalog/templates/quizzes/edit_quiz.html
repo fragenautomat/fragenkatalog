@@ -15,11 +15,15 @@
         <div class="card border-dark shadow-lg" style="margin-top: 20px;">
             <textarea name="description" class="form-control border-radius-0 card-header"
                       placeholder="Description" aria-label="Description"></textarea>
+            <div class="custom-file">
+                <input type="file" accept="image/*" class="custom-file-input" id="description-image" name="description_image">
+                <label class="custom-file-label" for="description-image" id="description-image-label">Choose a description image (optional)</label>
+            </div>
             <textarea name="solution" class="form-control border-radius-0 card-body"
                       placeholder="Solution" aria-label="Solution"></textarea>
             <div class="custom-file">
-              <input type="file" accept="image/*" class="custom-file-input" id="image" name="image">
-              <label class="custom-file-label" for="image" id="image-label">Choose a descriptive image (optional)</label>
+                <input type="file" accept="image/*" class="custom-file-input" id="solution-image" name="solution_image">
+                <label class="custom-file-label" for="solution-image" id="solution-image-label">Choose a solution image (optional)</label>
             </div>
             <button type="submit" class="card-footer"><span class="fas fa-plus"></span> Create new question</button>
         </div>
@@ -61,8 +65,11 @@
 {% if user.is_authenticated %}
 
 <script>
-$("#image").on("change", function(){
-    $("#image-label").text($("#image").val().split('\\').pop())
+$("#description-image").on("change", function(){
+    $("#description-image-label").text($("#description-image").val().split('\\').pop())
+});
+$("#solution-image").on("change", function(){
+    $("#solution-image-label").text($("#solution-image").val().split('\\').pop())
 });
 </script>
 

@@ -24,13 +24,13 @@ def new_question(request, quiz_id):
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
         return reload(request)
-    print(form.cleaned_data["image"])
     try:
         MultipleChoiceQuestion.create(
             description=form.cleaned_data["description"],
             solution=form.cleaned_data["solution"],
             quiz=associated_quiz,
-            image=form.cleaned_data["image"]
+            description_image=form.cleaned_data["description_image"],
+            solution_image=form.cleaned_data["solution_image"]
         )
         messages.success(request, "A new multiple choice question was added!")
     except ValueError:
@@ -38,7 +38,8 @@ def new_question(request, quiz_id):
             description=form.cleaned_data["description"],
             solution=form.cleaned_data["solution"],
             quiz=associated_quiz,
-            image=form.cleaned_data["image"]
+            description_image=form.cleaned_data["description_image"],
+            solution_image=form.cleaned_data["solution_image"]
         )
         messages.success(request, "A new textual question was added!")
     return reload(request)

@@ -8,8 +8,8 @@
 
   {% for question in questions %}
   <div class="card border-dark">
-    {% if question.image %}
-    <img class="card-img-top card-header" src="{{ question.image.url }}"
+    {% if question.description_image %}
+    <img class="card-img-top card-header" src="{{ question.description_image.url }}"
          style="max-height: 30rem; object-fit: contain;">
     {% endif %}
     <h5 class="card-header" style="padding: 1rem;">{{ question.description|linebreaks }}</h5>
@@ -38,12 +38,15 @@
             </div>
         </div>
       {% endif %}
-      <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
+      <a class="btn btn-outline-primary float-right mb-3" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
            role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
         <span class="fas fa-chevron-down"></span> Show Answer
       </a>
       <div class="collapse" id="collapse-{{ forloop.counter }}">
-        <div style="height: 20px;"></div>
+        {% if question.solution_image %}
+        <img class="card-img-top card-header" src="{{ question.solution_image.url }}"
+             style="max-height: 30rem; object-fit: contain;">
+        {% endif %}
 
         {% if question.multiplechoicequestion %}
             {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
