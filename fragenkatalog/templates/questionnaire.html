@@ -8,11 +8,11 @@
 
   {% for question in questions %}
   <div class="card border-dark">
+    <h5 class="card-header" style="padding: 1rem;">{{ question.description|linebreaks }}</h5>
     {% if question.description_image %}
     <img class="card-img-top card-header" src="{{ question.description_image.url }}"
          style="max-height: 30rem; object-fit: contain;">
     {% endif %}
-    <h5 class="card-header" style="padding: 1rem;">{{ question.description|linebreaks }}</h5>
     {% if question.multiplechoicequestion %}
     <div class="card-body">
         {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
@@ -26,28 +26,11 @@
     </div>
     {% endif %}
     <div class="card-body bg-light text-dark">
-      {% if question.textualquestion %}
-        <textarea class="rounded p-2 shadow-sm bg-light text-dark" id="solution-textarea-{{ question.id }}" style="width: 100%;" placeholder="Enter your proposed solution (BETA)."></textarea>
-        <div class="progress mb-2 mt-1 bg-primary" style="height: 2.5rem; position: relative;">
-            <button id="submit-solution-textarea-{{ question.id }}" class="btn btn-outline-light" style="position: absolute; right: 0; top: 0; width: 100%; height: 2.5rem;"
-               role="button" >
-              <span class="fas fa-stethoscope"></span> Check proposed Solution <span id="solution-check-info-{{ question.id }}"></span>
-            </button>
-            <div    id="score-progress-bar-{{ question.id }}" class="progress-bar bg-success"
-                    role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-            </div>
-        </div>
-      {% endif %}
       <a class="btn btn-outline-primary float-right mb-3" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
            role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
         <span class="fas fa-chevron-down"></span> Show Answer
       </a>
       <div class="collapse" id="collapse-{{ forloop.counter }}">
-        {% if question.solution_image %}
-        <img class="card-img-top card-header" src="{{ question.solution_image.url }}"
-             style="max-height: 30rem; object-fit: contain;">
-        {% endif %}
-
         {% if question.multiplechoicequestion %}
             {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
             <div class="form-check {% if choice.is_solution %}correct{% endif %}">
@@ -63,8 +46,27 @@
             <p class="card-text">{{ question.textualquestion.solution|linebreaks }}</p>
         {% endif %}
 
+        {% if question.solution_image %}
+        <img class="card-img-top card-header" src="{{ question.solution_image.url }}"
+             style="max-height: 30rem; object-fit: contain;">
+        {% endif %}
+
       </div>
     </div>
+    {% if question.textualquestion %}
+    <div class="card-footer">
+          <textarea class="rounded p-2 shadow-sm bg-light text-dark" id="solution-textarea-{{ question.id }}" style="width: 100%;" placeholder="Enter your proposed solution (BETA)."></textarea>
+          <div class="progress mb-2 mt-1 bg-primary" style="height: 2.5rem; position: relative;">
+              <button id="submit-solution-textarea-{{ question.id }}" class="btn btn-outline-light" style="position: absolute; right: 0; top: 0; width: 100%; height: 2.5rem;"
+                 role="button" >
+                <span class="fas fa-stethoscope"></span> Check proposed Solution <span id="solution-check-info-{{ question.id }}"></span>
+              </button>
+              <div    id="score-progress-bar-{{ question.id }}" class="progress-bar bg-success"
+                      role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              </div>
+          </div>
+    </div>
+    {% endif %}
   </div>
   {% endfor %}
 
