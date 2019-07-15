@@ -29,7 +29,7 @@
     </div>
     {% endif %}
     <div class="card-body bg-light text-dark">
-        <a class="btn btn-outline-primary float-right mb-3" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
+        <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
            role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
         <span class="fas fa-chevron-down"></span> Show Answer
       </a>
@@ -61,6 +61,7 @@
       </div>
     </div>
     {% if question.textualquestion %}
+    {% comment %}
     <div class="card-footer">
           <textarea class="rounded p-2 shadow-sm bg-light text-dark" id="solution-textarea-{{ question.id }}" style="width: 100%;" placeholder="Enter your proposed solution (BETA)."></textarea>
           <div class="progress mb-2 mt-1 bg-primary" style="height: 2.5rem; position: relative;">
@@ -73,6 +74,7 @@
               </div>
           </div>
     </div>
+    {% endcomment %}
     {% endif %}
   </div>
   {% endfor %}
@@ -108,6 +110,7 @@
 
 {% block extrabody %}
 
+{% comment %}
 <script>
     $(document).ready(function() {
         {% for question in questions %}
@@ -150,5 +153,6 @@
         {% endfor %}
     });
 </script>
+{% endcomment %}
 
 {% endblock %}
