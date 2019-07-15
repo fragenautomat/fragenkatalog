@@ -13,7 +13,7 @@
 {% else %}
 
     <div class="row">
-        <div class="col-sm">
+        <div class="col-lg">
             {% if not question %}
             <form enctype="multipart/form-data" action="{% url 'new_question' quiz.id %}" method="post">
             {% else %}
@@ -43,7 +43,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-sm" id="preview">
+        <div class="col-lg" id="preview">
             <div class="card border-dark shadow-lg" style="margin-top: 20px;">
                 <div class="badge badge-primary" style="position: absolute; right: 0.25rem; top: 0.25rem;">Preview</div>
                 <div class="card-header" id="preview-description">
@@ -80,7 +80,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm">
+        <div class="col-lg">
             <h5 style="padding-top: 5rem;"><span class="fas fa-angle-right"></span> Adding new Questions</h5>
             <p>
                 To add new questions, simply type the title and the description of each question

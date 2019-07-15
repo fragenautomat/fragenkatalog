@@ -7,7 +7,7 @@
 
 <div class="container" style="padding-top: 20px; padding-bottom: 100px;">
 
-    <div class="col" style="min-width: 30rem;">
+    <div class="col">
       {% for question in questions %}
       <div class="card border-dark mb-3 shadow-lg">
         {% with description=question.description|markdown %}
