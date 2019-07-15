@@ -9,7 +9,9 @@
 
   {% for question in questions %}
   <div class="card border-dark">
-    <div class="card-header" style="padding: 1rem;">{{ question.description|markdown }}</div>
+    {% with description=question.description|markdown %}
+    <div class="card-header" style="padding: 1rem;">{{ description|linebreaks }}</div>
+    {% endwith %}
     {% if question.description_image %}
     <img class="card-img-top card-header" src="{{ question.description_image.url }}"
          style="max-height: 30rem; object-fit: contain;">
@@ -46,7 +48,9 @@
         {% endif %}
 
         {% if question.textualquestion %}
-            <p class="card-text">{{ question.textualquestion.solution|markdown }}</p>
+        {% with solution=question.textualquestion.solution|markdown %}
+            <p class="card-text">{{ solution|linebreaks }}</p>
+        {% endwith %}
         {% endif %}
 
         {% if question.solution_image %}
