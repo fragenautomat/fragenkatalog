@@ -19,6 +19,9 @@ class Question(models.Model):
     description_image = models.ImageField(upload_to="images", null=True, blank=True)
     solution_image = models.ImageField(upload_to="images", null=True, blank=True)
 
+    def __str__(self):
+        return "({}) {}".format(self.quiz, self.description)
+
 class TextualQuestion(Question):
     # mandatory fields
     solution = models.CharField(max_length=10000)
