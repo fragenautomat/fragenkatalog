@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load markdown %}
 
 {% block body %}
 
@@ -8,7 +9,7 @@
 
   {% for question in questions %}
   <div class="card border-dark">
-    <h5 class="card-header" style="padding: 1rem;">{{ question.description|linebreaks }}</h5>
+    <div class="card-header" style="padding: 1rem;">{{ question.description|markdown }}</div>
     {% if question.description_image %}
     <img class="card-img-top card-header" src="{{ question.description_image.url }}"
          style="max-height: 30rem; object-fit: contain;">
@@ -26,10 +27,12 @@
     </div>
     {% endif %}
     <div class="card-body bg-light text-dark">
-      <a class="btn btn-outline-primary float-right mb-3" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
+        <a class="btn btn-outline-primary float-right mb-3" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
            role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
         <span class="fas fa-chevron-down"></span> Show Answer
       </a>
+    </div>
+    <div class="card-body bg-light text-dark">
       <div class="collapse" id="collapse-{{ forloop.counter }}">
         {% if question.multiplechoicequestion %}
             {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
@@ -43,7 +46,7 @@
         {% endif %}
 
         {% if question.textualquestion %}
-            <p class="card-text">{{ question.textualquestion.solution|linebreaks }}</p>
+            <p class="card-text">{{ question.textualquestion.solution|markdown }}</p>
         {% endif %}
 
         {% if question.solution_image %}
