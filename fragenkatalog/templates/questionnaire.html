@@ -81,7 +81,7 @@
 
     {% if questions.paginator %}
     <nav aria-label="Question pagination" class="shadow-lg" style="position: sticky;bottom: 1rem;padding: 0.5rem;background-color: rgba(255,255,255,0.5);border-radius: 0.5rem;">
-        <ul class="pagination">
+        <ul class="pagination m-0">
             {% if questions.has_previous %}
                 <li class="page-item"><a class="page-link" href="?question={{ questions.previous_page_number }}"><span class="fas fa-chevron-left"></span></a></li>
             {% else %}
