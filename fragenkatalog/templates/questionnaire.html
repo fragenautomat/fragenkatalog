@@ -7,77 +7,62 @@
 
 <div class="container" style="padding-top: 20px; padding-bottom: 100px;">
 
-  {% for question in questions %}
-  <div class="card border-dark mb-3 shadow-lg">
-    {% with description=question.description|markdown %}
-    <div class="card-header" style="padding: 1rem;">{{ description|linebreaks }}</div>
-    {% endwith %}
-    {% if question.description_image %}
-    <img class="card-img-top card-header" src="{{ question.description_image.url }}"
-         style="max-height: 30rem; object-fit: contain;">
-    {% endif %}
-    {% if question.multiplechoicequestion %}
-    <div class="card-body">
-        {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="check-{{ forloop.counter }}">
-          <label class="form-check-label" for="check-{{ forloop.counter }}">
-            {{ choice.option_description }}
-          </label>
+    <div class="col" style="min-width: 30rem;">
+      {% for question in questions %}
+      <div class="card border-dark mb-3 shadow-lg">
+        {% with description=question.description|markdown %}
+        <div class="card-header" style="padding: 1rem;">
+            {% if user.is_authenticated and question.quiz.created_by == user %}
+                <a href="{% url 'edit_question' question.quiz.id question.id %}" class="btn btn-outline-dark float-right"><span class="fas fa-edit"></span></a>
+            {% endif %}
+            {{ description|linebreaks }}
         </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    <div class="card-body bg-light text-dark">
-        <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
-           role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
-        <span class="fas fa-chevron-down"></span> Show Answer
-      </a>
-    </div>
-    <div class="card-body bg-light text-dark">
-      <div class="collapse" id="collapse-{{ forloop.counter }}">
-        {% if question.multiplechoicequestion %}
-            {% for choice in question.multiplechoicequestion.multiplechoiceoption_set.all %}
-            <div class="form-check {% if choice.is_solution %}correct{% endif %}">
-              <input class="form-check-input" type="checkbox" value="" id="check-{{ forloop.counter }}" {% if choice.is_solution %}checked{% endif %}>
-              <label class="form-check-label" for="check-{{ forloop.counter }}">
-                {{ choice.option_description }}
-              </label>
-            </div>
-            {% endfor %}
-        {% endif %}
-
-        {% if question.textualquestion %}
-        {% with solution=question.textualquestion.solution|markdown %}
-            <p class="card-text">{{ solution|linebreaks }}</p>
         {% endwith %}
-        {% endif %}
-
-        {% if question.solution_image %}
-        <img class="card-img-top card-header" src="{{ question.solution_image.url }}"
+        {% if question.description_image %}
+        <img class="card-img-top card-header" src="{{ question.description_image.url }}"
              style="max-height: 30rem; object-fit: contain;">
         {% endif %}
+        <div class="card-body bg-light text-dark">
+            <a class="btn btn-outline-primary float-right" data-toggle="collapse" href="#collapse-{{ forloop.counter }}"
+               role="button" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
+            <span class="fas fa-chevron-down"></span> Show Answer
+          </a>
+        </div>
+        <div class="card-body bg-light text-dark">
+          <div class="collapse" id="collapse-{{ forloop.counter }}">
+            {% if question.textualquestion %}
+            {% with solution=question.textualquestion.solution|markdown %}
+                <p class="card-text">{{ solution|linebreaks }}</p>
+            {% endwith %}
+            {% endif %}
 
-      </div>
-    </div>
-    {% if question.textualquestion %}
-    {% comment %}
-    <div class="card-footer">
-          <textarea class="rounded p-2 shadow-sm bg-light text-dark" id="solution-textarea-{{ question.id }}" style="width: 100%;" placeholder="Enter your proposed solution (BETA)."></textarea>
-          <div class="progress mb-2 mt-1 bg-primary" style="height: 2.5rem; position: relative;">
-              <button id="submit-solution-textarea-{{ question.id }}" class="btn btn-outline-light" style="position: absolute; right: 0; top: 0; width: 100%; height: 2.5rem;"
-                 role="button" >
-                <span class="fas fa-stethoscope"></span> Check proposed Solution <span id="solution-check-info-{{ question.id }}"></span>
-              </button>
-              <div    id="score-progress-bar-{{ question.id }}" class="progress-bar bg-success"
-                      role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-              </div>
+            {% if question.solution_image %}
+            <img class="card-img-top card-header" src="{{ question.solution_image.url }}"
+                 style="max-height: 30rem; object-fit: contain;">
+            {% endif %}
+
           </div>
-    </div>
-    {% endcomment %}
-    {% endif %}
-  </div>
-  {% endfor %}
+        </div>
+        {% if question.textualquestion %}
+        {% comment %}
+        <!--
+        <div class="card-footer">
+              <textarea class="rounded p-2 shadow-sm bg-light text-dark" id="solution-textarea-{{ question.id }}" style="width: 100%;" placeholder="Enter your proposed solution (BETA)."></textarea>
+              <div class="progress mb-2 mt-1 bg-primary" style="height: 2.5rem; position: relative;">
+                  <button id="submit-solution-textarea-{{ question.id }}" class="btn btn-outline-light" style="position: absolute; right: 0; top: 0; width: 100%; height: 2.5rem;"
+                     role="button" >
+                    <span class="fas fa-stethoscope"></span> Check proposed Solution <span id="solution-check-info-{{ question.id }}"></span>
+                  </button>
+                  <div    id="score-progress-bar-{{ question.id }}" class="progress-bar bg-success"
+                          role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                  </div>
+              </div>
+        </div>
+        -->
+        {% endcomment %}
+        {% endif %}
+      </div>
+      {% endfor %}
 
     {% if questions.paginator %}
     <nav aria-label="Question pagination" class="shadow-lg" style="position: sticky;bottom: 1rem;padding: 0.5rem;background-color: rgba(255,255,255,0.5);border-radius: 0.5rem;">

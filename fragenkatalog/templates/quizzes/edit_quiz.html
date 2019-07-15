@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load markdown %}
+
 {% block body %}
 
 <div class="container" style="padding-top: 20px;">
@@ -10,25 +12,73 @@
 
 {% else %}
 
-    <form enctype="multipart/form-data" action="{% url 'new_question' quiz.id %}" method="post">
-        {% csrf_token %}
-        <div class="card border-dark shadow-lg" style="margin-top: 20px;">
-            <textarea name="description" class="form-control border-radius-0 card-header"
-                      placeholder="Description" aria-label="Description"></textarea>
-            <div class="custom-file">
-                <input type="file" accept="image/*" class="custom-file-input" id="description-image" name="description_image">
-                <label class="custom-file-label" for="description-image" id="description-image-label">Choose a description image (optional)</label>
-            </div>
-            <textarea name="solution" class="form-control border-radius-0 card-body"
-                      placeholder="Solution" aria-label="Solution"></textarea>
-            <div class="custom-file">
-                <input type="file" accept="image/*" class="custom-file-input" id="solution-image" name="solution_image">
-                <label class="custom-file-label" for="solution-image" id="solution-image-label">Choose a solution image (optional)</label>
-            </div>
-            <button type="submit" class="card-footer"><span class="fas fa-plus"></span> Create new question</button>
+    <div class="row">
+        <div class="col-sm">
+            {% if not question %}
+            <form enctype="multipart/form-data" action="{% url 'new_question' quiz.id %}" method="post">
+            {% else %}
+            <form enctype="multipart/form-data" action="{% url 'edit_question' quiz.id question.id %}" method="post">
+            {% endif %}
+                {% csrf_token %}
+                <div class="card border-dark shadow-lg" style="margin-top: 20px;">
+                    <textarea id="description-textarea" name="description" class="form-control border-radius-0 card-header bg-light"
+                              placeholder="Description" aria-label="Description">{% if question %}{{ question.description }}{% endif %}</textarea>
+                    <div class="custom-file border-radius-0">
+                        <input type="file" accept="image/*" class="custom-file-input" id="description-image" name="description_image">
+                        <label class="custom-file-label" for="description-image" id="description-image-label">Description image</label>
+                    </div>
+                    <textarea id="solution-textarea" name="solution" class="form-control border-radius-0 card-body"
+                              placeholder="Solution" aria-label="Solution">{% if question %}{{ question.solution }}{% endif %}</textarea>
+                    <div class="custom-file">
+                        <input type="file" accept="image/*" class="custom-file-input" id="solution-image" name="solution_image">
+                        <label class="custom-file-label" for="solution-image" id="solution-image-label">Solution image</label>
+                    </div>
+                    <button type="submit" class="card-footer bg-custom-accent text-white">
+                        {% if not question %}
+                        <span class="fas fa-plus"></span> Create new question
+                        {% else %}
+                        <span class="fas fa-edit"></span> Save changes
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
-
+        <div class="col-sm" id="preview">
+            <div class="card border-dark shadow-lg" style="margin-top: 20px;">
+                <div class="badge badge-primary" style="position: absolute; right: 0.25rem; top: 0.25rem;">Preview</div>
+                <div class="card-header" id="preview-description">
+                    {% if question and question.textualquestion %}
+                    {% with description=question.textualquestion.description|markdown %}
+                        {{ description|linebreaks }}
+                    {% endwith %}
+                    {% endif %}
+                </div>
+                <img id="description-image-preview" class="card-img-top card-header"
+                    {% if question and question.description_image %}
+                        src="{{ question.description_image.url }}"
+                    {% else %}
+                        src=""
+                    {% endif %}
+                     style="max-height: 30rem; object-fit: contain; {% if not question %}display: none;{% endif %}">
+                <div class="card-body">
+                    <div id="preview-solution">
+                        {% if question and question.textualquestion %}
+                        {% with solution=question.textualquestion.solution|markdown %}
+                            {{ solution|linebreaks }}
+                        {% endwith %}
+                        {% endif %}
+                    </div>
+                    <img id="solution-image-preview" class="card-img-top card-header"
+                        {% if question and question.solution_image %}
+                            src="{{ question.solution_image.url }}"
+                        {% else %}
+                            src=""
+                        {% endif %}
+                         style="max-height: 30rem; object-fit: contain; {% if not question %}display: none;{% endif %}">
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm">
             <h5 style="padding-top: 5rem;"><span class="fas fa-angle-right"></span> Adding new Questions</h5>
@@ -36,22 +86,9 @@
                 To add new questions, simply type the title and the description of each question
                 into the corresponding fields and select <code class="rounded bg-light p-1">Create new question</code>.
                 You may as well choose a descriptive image by clicking on the corresponding button.
+                All fields are optional.
             </p>
             <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown is supported.</a>
-        </div>
-        <div class="col-sm">
-            <h5 style="padding-top: 5rem;"><span class="fas fa-angle-right"></span> Multiple Choice Questions</h5>
-            <p>
-                To add a multiple choice question, add a description first and then use the following syntax
-                for the solution. The server will automatically create a multiple choice question for you:
-            </p>
-            <div class="rounded bg-light text-dark p-1">
-                <code>- [ ] Option A</code><br>
-                <code>- [ ] Option B</code><br>
-                <code>- [x] Option C (correct)</code><br>
-                <code>- [ ] Option D</code><br>
-                <code>- [x] Option E (also correct)</code><br>
-            </div>
         </div>
     </div>
 
@@ -66,12 +103,41 @@
 {% if user.is_authenticated %}
 
 <script>
-$("#description-image").on("change", function(){
-    $("#description-image-label").text($("#description-image").val().split('\\').pop())
+
+$(document).ready(function() {
+    var converter = new showdown.Converter();
+
+    window.previewImage = function(input, target) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                target.attr("src", e.target.result);
+                target.fadeIn();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#description-image").on("change", function(){
+        $("#description-image-label").text($("#description-image").val().split('\\').pop());
+        window.previewImage(this, $("#description-image-preview"));
+    });
+    $("#solution-image").on("change", function(){
+        $("#solution-image-label").text($("#solution-image").val().split('\\').pop());
+        window.previewImage(this, $("#solution-image-preview"));
+    });
+    $("#description-textarea").on("change keyup paste", function() {
+        let text = $(this).val();
+        let html = converter.makeHtml(text);
+        $("#preview-description").html(html);
+    });
+    $("#solution-textarea").on("change keyup paste", function() {
+        let text = $(this).val();
+        let html = converter.makeHtml(text);
+        $("#preview-solution").html(html);
+    });
 });
-$("#solution-image").on("change", function(){
-    $("#solution-image-label").text($("#solution-image").val().split('\\').pop())
-});
+
 </script>
 
 {% endif %}

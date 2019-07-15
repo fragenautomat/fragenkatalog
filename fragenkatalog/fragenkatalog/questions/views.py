@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 from fragenkatalog.questions.forms import NewQuestionForm
-from fragenkatalog.questions.models import TextualQuestion, Question, MultipleChoiceQuestion
+from fragenkatalog.questions.models import TextualQuestion, Question
 from fragenkatalog.quizzes.models import Quiz
 from fragenkatalog.responses import reload
 from fragenkatalog.questions.tools import RandomizablePaginator
@@ -24,25 +25,44 @@ def new_question(request, quiz_id):
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
         return reload(request)
-    try:
-        MultipleChoiceQuestion.create(
-            description=form.cleaned_data["description"],
-            solution=form.cleaned_data["solution"],
-            quiz=associated_quiz,
-            description_image=form.cleaned_data["description_image"],
-            solution_image=form.cleaned_data["solution_image"]
-        )
-        messages.success(request, "A new multiple choice question was added!")
-    except ValueError:
-        TextualQuestion.objects.create(
-            description=form.cleaned_data["description"],
-            solution=form.cleaned_data["solution"],
-            quiz=associated_quiz,
-            description_image=form.cleaned_data["description_image"],
-            solution_image=form.cleaned_data["solution_image"]
-        )
-        messages.success(request, "A new textual question was added!")
+    TextualQuestion.objects.create(
+        description=form.cleaned_data["description"],
+        solution=form.cleaned_data["solution"],
+        quiz=associated_quiz,
+        description_image=form.cleaned_data["description_image"],
+        solution_image=form.cleaned_data["solution_image"]
+    )
+    messages.success(request, "A new textual question was added!")
     return reload(request)
+
+
+@login_required
+def edit_question(request, quiz_id, question_id):
+    form = NewQuestionForm(request.POST, request.FILES)
+    if not form.is_valid():
+        messages.error(request, "The submitted form is incorrect: {}".format(form.errors))
+        return reload(request)
+    associated_quiz = Quiz.objects.get(id=quiz_id)
+    if not associated_quiz:
+        messages.error(request, "No associated quiz found.")
+        return reload(request)
+    try:
+        question = TextualQuestion.objects.get(id=question_id)
+    except ObjectDoesNotExist:
+        messages.error(request, "This question is unavailable.")
+        return reload(request)
+    if not request.method == "POST":
+        return TemplateResponse(request, "quizzes/edit_quiz.html", {"quiz": associated_quiz, "question": question})
+    question.description = form.cleaned_data["description"]
+    question.solution = form.cleaned_data["solution"]
+    if form.cleaned_data["description_image"]:
+        question.description_image = form.cleaned_data["description_image"]
+    if form.cleaned_data["solution_image"]:
+        question.solution_image = form.cleaned_data["solution_image"]
+    question.save()
+    messages.success(request, "The question was successfully edited!")
+    return reload(request)
+
 
 def questionnaire(request, quiz_id):
     associated_quiz = Quiz.objects.get(id=quiz_id)
