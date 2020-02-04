@@ -11,6 +11,8 @@ from fragenkatalog.quizzes.models import Quiz
 from fragenkatalog.responses import reload
 from fragenkatalog.questions.tools import RandomizablePaginator
 
+from fragenkatalog.quizzes.views import edit_quiz
+
 
 @login_required
 def new_question(request, quiz_id):
@@ -33,7 +35,7 @@ def new_question(request, quiz_id):
         solution_image=form.cleaned_data["solution_image"]
     )
     messages.success(request, "A new textual question was added!")
-    return reload(request)
+    return edit_quiz(request, quiz_id)
 
 
 @login_required
