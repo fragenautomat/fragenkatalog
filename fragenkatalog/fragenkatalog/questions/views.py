@@ -42,28 +42,21 @@ def new_question(request, quiz_id):
 
 
 @login_required
-def edit_question(request, quiz_id, question_id):
+def edit_question(request, question_id):
     form = NewQuestionForm(request.POST, request.FILES)
     if not form.is_valid():
         messages.error(request, "The submitted form is incorrect: {}".format(form.errors))
-        return reload(request)
-    associated_quiz = Quiz.objects.get(id=quiz_id)
-    if not associated_quiz:
-        messages.error(request, "No associated quiz found.")
-        return reload(request)
-    if request.user != associated_quiz.created_by:
-        messages.error(request, "You can only edit your own quizzes!")
         return reload(request)
     try:
         question = TextualQuestion.objects.get(id=question_id)
     except ObjectDoesNotExist:
         messages.error(request, "This question is unavailable.")
         return reload(request)
-    if question.quiz_id != quiz_id:
+    if request.user != question.quiz.created_by:
         messages.error(request, "You can only edit your own quizzes!")
         return reload(request)
     if not request.method == "POST":
-        return TemplateResponse(request, "quizzes/edit_quiz.html", {"quiz": associated_quiz, "question": question})
+        return TemplateResponse(request, "quizzes/edit_quiz.html", {"quiz": question.quiz, "question": question})
     question.description = form.cleaned_data["description"]
     question.solution = form.cleaned_data["solution"]
     if form.cleaned_data["description_image"]:
