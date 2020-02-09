@@ -2,18 +2,19 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
-from django.template.response import TemplateResponse
+from django.template.response import TemplateResponse, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import render
+from django.utils.text import slugify
 
 from fragenkatalog.questions.forms import NewQuestionForm
 from fragenkatalog.questions.models import TextualQuestion, Question
 from fragenkatalog.quizzes.models import Quiz
 from fragenkatalog.responses import reload
 from fragenkatalog.questions.tools import RandomizablePaginator
-
 from fragenkatalog.quizzes.views import edit_quiz
-
 from fragenkatalog.djangostatistics.models import Interaction
+from fragenkatalog.templatetags.markdown import markdown
 
 
 @login_required
@@ -97,3 +98,18 @@ def questionnaire(request, quiz_id):
         "quiz": associated_quiz,
         "questions": questions
     })
+
+
+def questionnaire_all(request, quiz_id):
+    associated_quiz = Quiz.objects.get(id=quiz_id)
+    if not associated_quiz:
+        messages.error(request, "No associated quiz found.")
+        return reload(request)
+    questions = associated_quiz.question_set.all()
+
+    html = render(request, "questionnaire_all.html", {
+        "quiz": associated_quiz,
+        "questions": questions
+    })
+
+    return html
