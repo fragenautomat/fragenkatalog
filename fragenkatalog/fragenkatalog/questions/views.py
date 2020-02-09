@@ -24,6 +24,9 @@ def new_question(request, quiz_id):
         messages.error(request, "The submitted form is incorrect: {}".format(form.errors))
         return reload(request)
     associated_quiz = Quiz.objects.get(id=quiz_id)
+    if request.user != associated_quiz.created_by:
+        messages.error(request, "You can only edit your own quizzes!")
+        return reload(request)
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
         return reload(request)
@@ -47,6 +50,9 @@ def edit_question(request, quiz_id, question_id):
     associated_quiz = Quiz.objects.get(id=quiz_id)
     if not associated_quiz:
         messages.error(request, "No associated quiz found.")
+        return reload(request)
+    if request.user != associated_quiz.created_by:
+        messages.error(request, "You can only edit your own quizzes!")
         return reload(request)
     try:
         question = TextualQuestion.objects.get(id=question_id)
