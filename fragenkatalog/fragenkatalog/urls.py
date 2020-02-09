@@ -20,6 +20,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.conf import settings
 from fragenkatalog import views, settings
+from fragenkatalog.djangostatistics.admin import admin_site as statistics_admin_site
 from fragenkatalog.quizzes.urls import urls as quizzes_urls
 from fragenkatalog.questions.urls import urls as questions_urls
 from fragenkatalog.social.urls import urls as social_urls
@@ -30,6 +31,9 @@ urlpatterns = [
     # Core views
     url(r'^$', views.index, name='index'),
     url(r'^search/', views.search, name='search'),
+
+    # Statistics
+    url(r'^statistics/', statistics_admin_site.urls),
 
     # Middleware views
     url(r'i18n/', include('django.conf.urls.i18n')),

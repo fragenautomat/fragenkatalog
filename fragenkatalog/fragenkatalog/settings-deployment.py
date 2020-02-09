@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'fragenkatalog.questions',
     'fragenkatalog.social',
     'fragenkatalog.compilations',
+    'fragenkatalog.djangostatistics',
 ]
 
 MIDDLEWARE = [

@@ -22,12 +22,14 @@
                 {% csrf_token %}
                 <div class="card border-dark shadow-lg" style="margin-top: 20px;">
                     <textarea id="description-textarea" name="description" class="form-control border-radius-0 card-header bg-light"
+                              oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
                               placeholder="Description" aria-label="Description">{% if question %}{{ question.description }}{% endif %}</textarea>
                     <div class="custom-file border-radius-0">
                         <input type="file" accept="image/*" class="custom-file-input" id="description-image" name="description_image">
                         <label class="custom-file-label" for="description-image" id="description-image-label">Description image</label>
                     </div>
                     <textarea id="solution-textarea" name="solution" class="form-control border-radius-0 card-body"
+                              oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
                               placeholder="Solution" aria-label="Solution">{% if question %}{{ question.solution }}{% endif %}</textarea>
                     <div class="custom-file">
                         <input type="file" accept="image/*" class="custom-file-input" id="solution-image" name="solution_image">

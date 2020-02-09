@@ -13,6 +13,8 @@ from fragenkatalog.questions.tools import RandomizablePaginator
 
 from fragenkatalog.quizzes.views import edit_quiz
 
+from fragenkatalog.djangostatistics.models import Interaction
+
 
 @login_required
 def new_question(request, quiz_id):
@@ -38,11 +40,14 @@ def new_question(request, quiz_id):
         solution_image=form.cleaned_data["solution_image"]
     )
     messages.success(request, "A new textual question was added!")
+
+    Interaction.objects.create(interaction_type="New question added")
+
     return edit_quiz(request, quiz_id)
 
 
 @login_required
-def edit_question(request, question_id):
+def edit_question(request, quiz_id, question_id):
     form = NewQuestionForm(request.POST, request.FILES)
     if not form.is_valid():
         messages.error(request, "The submitted form is incorrect: {}".format(form.errors))
@@ -51,6 +56,9 @@ def edit_question(request, question_id):
         question = TextualQuestion.objects.get(id=question_id)
     except ObjectDoesNotExist:
         messages.error(request, "This question is unavailable.")
+        return reload(request)
+    if question.quiz_id != int(quiz_id):
+        messages.error(request, "You can only edit your own quizzes!")
         return reload(request)
     if request.user != question.quiz.created_by:
         messages.error(request, "You can only edit your own quizzes!")
@@ -65,6 +73,9 @@ def edit_question(request, question_id):
         question.solution_image = form.cleaned_data["solution_image"]
     question.save()
     messages.success(request, "The question was successfully edited!")
+
+    Interaction.objects.create(interaction_type="Question edited")
+
     return reload(request)
 
 
@@ -77,6 +88,10 @@ def questionnaire(request, quiz_id):
     question_paginator = RandomizablePaginator(questions, 1)
     question_page = request.GET.get("question")
     questions = question_paginator.get_page(question_page)
+
+    Interaction.objects.create(
+        interaction_type="Questionnaire of quiz \"{}\" visited".format(associated_quiz.title)
+    )
 
     return TemplateResponse(request, "questionnaire.html", {
         "quiz": associated_quiz,

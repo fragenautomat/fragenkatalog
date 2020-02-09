@@ -9,10 +9,14 @@ from django.utils import timezone
 from fragenkatalog.quizzes.forms import NewQuizForm
 from fragenkatalog.quizzes.models import Quiz
 from fragenkatalog.responses import reload
+from fragenkatalog.djangostatistics.models import Interaction
 
 
 @login_required
 def my_quizzes(request):
+
+    Interaction.objects.create(interaction_type="My quizzes searched")
+
     return TemplateResponse(request, "index.html", {
         "quizzes": Quiz.objects.filter(created_by=request.user),
     })
@@ -29,6 +33,9 @@ def delete_quiz(request, id):
         return reload(request)
     quiz.delete()
     messages.success(request, "Quiz was successfully deleted!")
+
+    Interaction.objects.create(interaction_type="Quiz deleted")
+
     return reload(request)
 
 
@@ -53,6 +60,9 @@ def new_quiz(request):
         created_by=request.user
     )
     messages.success(request, "A new quiz was created!")
+
+    Interaction.objects.create(interaction_type="Quiz created")
+
     return edit_quiz(request, quiz.id)
 
 

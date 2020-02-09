@@ -8,6 +8,7 @@ from fragenkatalog.compilations.models import Compilation
 from fragenkatalog.forms import SearchForm, RegistrationForm
 from fragenkatalog.quizzes.models import Quiz, HashTag
 from fragenkatalog.responses import reload
+from fragenkatalog.djangostatistics.models import Interaction
 
 
 def index(request):
@@ -22,6 +23,8 @@ def index(request):
         compilation_paginator = Paginator(compilations, 3)
         compilation_page = request.GET.get("compilation_page")
         compilations = compilation_paginator.get_page(compilation_page)
+
+    Interaction.objects.create(interaction_type="Index page visited")
 
     return TemplateResponse(request, "index.html", {
         "quizzes": quizzes,
@@ -50,6 +53,8 @@ def search(request):
     description_compilations = Compilation.objects.filter(description__icontains=query)
     compilations = set(title_compilations | description_compilations)
 
+    Interaction.objects.create(interaction_type="Questionnaire searched")
+
     return TemplateResponse(request, "index.html", {
         "quizzes": quizzes,
         "compilations": compilations,
@@ -70,4 +75,7 @@ def register(request):
             return HttpResponseRedirect("/")
     else:
         form = RegistrationForm()
+
+    Interaction.objects.create(interaction_type="New user created")
+
     return TemplateResponse(request, "registration/register.html", {"form": form})
