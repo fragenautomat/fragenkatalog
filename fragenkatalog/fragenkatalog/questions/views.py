@@ -59,6 +59,9 @@ def edit_question(request, quiz_id, question_id):
     except ObjectDoesNotExist:
         messages.error(request, "This question is unavailable.")
         return reload(request)
+    if question.quiz_id != quiz_id:
+        messages.error(request, "You can only edit your own quizzes!")
+        return reload(request)
     if not request.method == "POST":
         return TemplateResponse(request, "quizzes/edit_quiz.html", {"quiz": associated_quiz, "question": question})
     question.description = form.cleaned_data["description"]
